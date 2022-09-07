@@ -125,3 +125,7 @@ export default async (app, options) => {
 
   return app;
 };
+
+export const options = {
+  port: process.env.PORT || 3000,
+};
