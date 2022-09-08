@@ -1,5 +1,8 @@
 name: Node CI
 
+env:
+  SESSION_KEY: ${{ secrets.SESSION_KEY }}
+
 on:
   push:
     branches:

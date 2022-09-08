@@ -15,4 +15,7 @@ export default {
     ],
   },
   plugins: [new MiniCssExtractPlugin()],
+  // server: {
+  //   port: process.env.PORT,
+  // },
 };
