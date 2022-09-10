@@ -1,9 +1,14 @@
 extends ../layouts/application.pug
 
 block content
-  .card
-    .card-body.p-5.bg-light
-      .display-4= t('views.welcome.index.hello')
-      p.lead= t('views.welcome.index.description')
-      hr
-      a.btn.btn-primary.btn-lg(href="https://hexlet.io")= t('views.welcome.index.more')
+  .container
+    .row
+      .col-12
+        .card.text-dark.m-3.border-0.shadow.rounded-3
+          .card-body.p-5
+            .display-3.fw-bold= t('views.welcome.index.hello')
+            br
+            p.lead= t('views.welcome.index.description')
+            hr.mb-5
+            .d-flex.justify-content-center
+              a.btn.btn-warning.btn-lg.fw-normal.px-5(href="https://hexlet.io")= t('views.welcome.index.more')

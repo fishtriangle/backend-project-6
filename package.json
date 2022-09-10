@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "type": "module",
    "description": "backend study project #4",
-   "main": "src/index.js",
+   "main": "server/plugin.js",
    "engines": {
       "node": ">=16.x"
    },

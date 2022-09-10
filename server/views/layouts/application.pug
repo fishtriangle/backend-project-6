@@ -8,27 +8,43 @@ html(lang="en")
     link(href=assetPath('main.css') rel="stylesheet")
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
   body.d-flex.flex-column.min-vh-100
-    nav.navbar.navbar-expand-lg.navbar-light.bg-light.mb-3
-      .container-fluid
-        a.navbar-brand(href=route('root'))= t('appName')
-        button.navbar-toggler(data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent")
-          span.navbar-toggler-icon
-        .collapse.navbar-collapse(id="navbarToggleExternalContent")
-          .container-fluid
-            ul.navbar-nav.mr-auto
-              li.nav-item
-                a.nav-link(href=route('users'))= t('layouts.application.users')
-          ul.navbar-nav
+    header.p-3.bg-dark.text-white
+      .container
+        .d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start
+          a.d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none.fs-2.me-4.fw-lighter(href=route('root'))= t('appName')
+          ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
+            li
+              a.nav-link.px-2.text-secondary(href=route('users'))= t('layouts.application.users')
+          .text-end
             if isAuthenticated()
-              li.nav-item
-                +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
+              +buttonTo(route('session'), 'delete')(class="btn btn-warning" value=t('layouts.application.signOut'))
             else
-              li.nav-item
-                a.nav-link(href=route('newSession'))= t('layouts.application.signIn')
-              li.nav-item
-                a.nav-link(href=route('newUser'))= t('layouts.application.signUp')
-    .container.wrapper.flex-grow-1
+              a.btn.btn-outline-light.me-2(href=route('newSession'))= t('layouts.application.signIn')
+              a.btn.btn-warning(href=route('newUser'))= t('layouts.application.signUp')
 
+
+    //nav.navbar.navbar-expand-lg.navbar-light.bg-light.mb-3
+    //  .container-fluid
+    //    a.navbar-brand(href=route('root'))= t('appName')
+    //    button.navbar-toggler(data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent")
+    //      span.navbar-toggler-icon
+    //    .collapse.navbar-collapse(id="navbarToggleExternalContent")
+    //      .container-fluid
+    //        ul.navbar-nav.mr-auto
+    //          li.nav-item
+    //            a.nav-link(href=route('users'))= t('layouts.application.users')
+    //      ul.navbar-nav
+    //        if isAuthenticated()
+    //          li.nav-item
+    //            +buttonTo(route('session'), 'delete')(class="btn nav-link" value=t('layouts.application.signOut'))
+    //        else
+    //          li.nav-item
+    //            a.nav-link(href=route('newSession'))= t('layouts.application.signIn')
+    //          li.nav-item
+    //            a.nav-link(href=route('newUser'))= t('layouts.application.signUp')
+
+
+    .container.wrapper.flex-grow-1
       each messages, type in reply.flash() || []
         each message in messages
           div.alert(class=`alert-${getAlertClass(type)}`)= message
@@ -37,6 +53,11 @@ html(lang="en")
         block header
       block content
 
-    footer
-      .container.my-5.pt-4.border-top
-        a(target="_blank" href="https://ru.hexlet.io") Hexlet
+    footer.p-3.bg-dark.text-white
+      .container
+        a.mb-2.mb-lg-0.text-white.text-decoration-none.fs-6.me-4.fw-lighter(target="_blank" href="https://ru.hexlet.io")= t('layouts.application.footer')
+
+
+    //footer
+    //  .container.my-5.pt-4.border-top
+    //    a(target="_blank" href="https://ru.hexlet.io")= t('layouts.application.footer')
