@@ -20,7 +20,9 @@ export const development = {
 
 export const test = {
   client: 'sqlite3',
-  connection: ':memory:',
+  connection: {
+    filename: ':memory:',
+  },
   useNullAsDefault: true,
   // debug: true,
   migrations,

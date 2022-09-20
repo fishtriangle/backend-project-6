@@ -1,11 +1,10 @@
 // @ts-check
-
 import i18next from 'i18next';
 
 export default (app) => {
   app
     .get('/session/new', { name: 'newSession' }, (req, reply) => {
-      const signInForm = {};
+      const signInForm = new app.objection.models.user();
       reply.render('session/new', { signInForm });
     })
     .post('/session', { name: 'session' }, app.fp.authenticate('form', async (req, reply, err, user) => {
@@ -13,7 +12,8 @@ export default (app) => {
         return app.httpErrors.internalServerError(err);
       }
       if (!user) {
-        const signInForm = req.body.data;
+        const signInForm = new app.objection.models.user().$set(req.body.data);
+
         const errors = {
           email: [{ message: i18next.t('flash.session.create.error') }],
         };

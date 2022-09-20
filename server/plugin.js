@@ -1,10 +1,10 @@
 // @ts-check
-
+import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fastifyStatic from 'fastify-static';
 import fastifyErrorPage from 'fastify-error-page';
-
+import fastifyAuth from 'fastify-auth';
 import pointOfView from 'point-of-view';
 import fastifyFormbody from 'fastify-formbody';
 import fastifySecureSession from 'fastify-secure-session';
@@ -24,11 +24,15 @@ import getHelpers from './helpers/index.js';
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
+import User from "./models/User.js";
+
+dotenv.config();
 
 const __dirname = fileURLToPath(path.dirname(import.meta.url));
 
 const mode = process.env.NODE_ENV || 'development';
 // const isDevelopment = mode === 'development';
+// const isProduction = mode === 'production';
 
 const setUpViews = (app) => {
   const helpers = getHelpers(app);
@@ -78,6 +82,7 @@ const addHooks = (app) => {
 };
 
 const registerPlugins = (app) => {
+  app.register(fastifyAuth);
   app.register(fastifySensible);
   app.register(fastifyErrorPage);
   app.register(fastifyReverseRoutes);
@@ -111,6 +116,12 @@ const registerPlugins = (app) => {
     knexConfig: knexConfig[mode],
     models,
   });
+  app.decorate('checkUserPermission', async (request, reply) => {
+    if (request.user?.id !== parseInt(request.params.id, 10)) {
+      request.flash('error', i18next.t('flash.users.authError'));
+      reply.redirect('/users');
+    }
+  });
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -120,7 +131,9 @@ export default async (app, options) => {
   await setupLocalization();
   setUpViews(app);
   setUpStaticAssets(app);
-  addRoutes(app);
+  app.after(() => {
+    addRoutes(app);
+  });
   addHooks(app);
 
   return app;

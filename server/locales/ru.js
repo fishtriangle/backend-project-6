@@ -34,6 +34,9 @@ export default {
       session: {
         new: {
           signIn: 'Вход',
+          title: 'Введите данные',
+          mail: 'email',
+          password: 'пароль',
           submit: 'Войти',
         },
       },
@@ -44,6 +47,11 @@ export default {
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',
+          title: 'Введите данные',
+          mail: 'email',
+          password: 'пароль',
+          firstName: 'Имя',
+          lastName: 'Фамилия',
         },
       },
       welcome: {

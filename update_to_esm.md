@@ -7,4 +7,4 @@
 * Обновите версии зависимостей *knex*, *objection*, *objection-unique*, *fastify-objectionjs*, и установите зависимость *@vscode/sqlite3*. Используйте версии пакетов как в [текущем репозитории](./package.json)
 * У файлов содержащих описания моделей _models/*.js_ и *lib/secure.js* необходимо изменить расширение на _*.cjs_, и использовать в них синтаксис commonjs. Смотрите примеры: [models](./server/models/), [encrypt.cjs](./server/lib/secure.cjs)
 * Добавьте использование базового класса [BaseModel](./server/models/BaseModel.cjs)
-* В модели [User.cjs](./server/models/User.cjs) в json схеме замените для поля `email` свойство `format: email` на `minLength: 1`
+* В модели [User.js](./server/models/User.cjs) в json схеме замените для поля `email` свойство `format: email` на `minLength: 1`

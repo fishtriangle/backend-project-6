@@ -18,6 +18,9 @@ start:
 start-backend:
 	npm start --options --watch --verbose-watch --ignore-watch='node_modules .git .sqlite'
 
+start-back-nodemon:
+	nodemon --exec npm run dev
+
 start-frontend:
 	npx webpack --watch --progress
 
