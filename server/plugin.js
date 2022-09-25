@@ -24,7 +24,7 @@ import getHelpers from './helpers/index.js';
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
-import User from "./models/User.js";
+// import User from "./models/User.js";
 
 dotenv.config();
 
@@ -117,7 +117,10 @@ const registerPlugins = (app) => {
     models,
   });
   app.decorate('checkUserPermission', async (request, reply) => {
+    // console.log(request.user);
+    // console.log(request.params.id);
     if (request.user?.id !== parseInt(request.params.id, 10)) {
+      console.log('error checkUserPermission');
       request.flash('error', i18next.t('flash.users.authError'));
       reply.redirect('/users');
     }

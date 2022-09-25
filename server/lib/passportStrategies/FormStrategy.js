@@ -10,6 +10,7 @@ export default class FormStrategy extends Strategy {
   }
 
   async authenticate(request) {
+    console.log('AUTH');
     if (request.isAuthenticated()) {
       return this.pass();
     }
@@ -21,7 +22,7 @@ export default class FormStrategy extends Strategy {
     if (user && user.verifyPassword(password)) {
       return this.success(user);
     }
-
+    console.log('AUTH FAIL');
     return this.fail();
   }
 }

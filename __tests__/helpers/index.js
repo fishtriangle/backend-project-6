@@ -4,6 +4,8 @@
 // import fs from 'fs';
 // import path from 'path';
 import { faker } from '@faker-js/faker';
+// import {use} from "i18next";
+import encrypt from '../../server/lib/secure.cjs';
 
 // TODO: использовать для фикстур https://github.com/viglucci/simple-knex-fixtures
 
@@ -15,26 +17,38 @@ import { faker } from '@faker-js/faker';
 
 function createRandomUser() {
   return {
-    // userId: faker.datatype.uuid(),
+    id: faker.datatype.number(),
     // username: faker.internet.userName(),
     email: faker.internet.email(),
     // avatar: faker.image.avatar(),
-    password: faker.internet.password(15, true, /[a-zA-Z]|\d/),
-    passwordDigest: faker.internet.password(64, false, /[a-z]|\d/),
+    password: faker.internet.password(15, false, /[a-zA-Z]|\d/),
     // birthdate: faker.date.birthdate(),
     // registeredAt: faker.date.past(),
   };
 }
 
 // export const getTestData = () => getFixtureData('testData.json');
-export const getTestData = () => ({
-  users: {
-    new: createRandomUser(),
-    existing: createRandomUser(),
-    updated: createRandomUser(),
-    other: createRandomUser(),
-  },
-});
+export const getTestData = async (app) => {
+  const users = {
+    users: {
+      new: createRandomUser(),
+      existing: createRandomUser(),
+      updated: createRandomUser(),
+      other: createRandomUser(),
+    },
+  };
+
+  const { knex } = app.objection;
+
+  const usersList = Object.values(users.users)
+    .filter(({ id }) => ((id === users.users.existing.id) || (id === users.users.other.id)))
+    .map(({ id, email, password }) => ({ id, email, passwordDigest: encrypt(password) }));
+  // console.log('HELPERS', usersList);
+
+  await knex('users').insert(usersList);
+
+  return users;
+};
 
 export const prepareData = async (app) => {
   const { knex } = app.objection;
@@ -42,9 +56,11 @@ export const prepareData = async (app) => {
   const usersList = [];
   Array.from({ length: 5 }).forEach(() => {
     const generatedUser = createRandomUser();
+    generatedUser.passwordDigest = encrypt(generatedUser.password);
     delete generatedUser.password;
     usersList.push(generatedUser);
   });
+
   // получаем данные из фикстур и заполняем БД
   await knex('users').insert(usersList);
 };

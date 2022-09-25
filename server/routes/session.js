@@ -7,16 +7,17 @@ export default (app) => {
       const signInForm = new app.objection.models.user();
       reply.render('session/new', { signInForm });
     })
-    .post('/session', { name: 'session' }, app.fp.authenticate('form', async (req, reply, err, user) => {
+    .post('/session', { name: 'session' }, app.fp.authenticate('form', async (req, reply, err) => {
       if (err) {
         return app.httpErrors.internalServerError(err);
       }
+      const user = req.body?.data;
       if (!user) {
         const signInForm = new app.objection.models.user().$set(req.body.data);
-
         const errors = {
           email: [{ message: i18next.t('flash.session.create.error') }],
         };
+
         return reply.render('session/new', { signInForm, errors });
       }
       await req.logIn(user);
