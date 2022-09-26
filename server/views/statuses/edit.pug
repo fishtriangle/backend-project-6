@@ -1,0 +1,11 @@
+extends ../layouts/application.pug
+
+block header
+    = t('views.statuses.editTitle')
+
+
+block content
+    +formFor()(action=route('statusUpdate', { id: 'status.id' }) method='post')
+        +input('status', 'name', errors)(type="text")
+        input(name='_method' type='hidden' value='patch')
+        +submit('status')(class="btn btn-dark me-2" value=t('views.statuses.edit'))

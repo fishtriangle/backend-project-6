@@ -3,6 +3,7 @@
 import i18next from 'i18next';
 import { ValidationError } from 'objection';
 import _ from 'lodash';
+import uniqid from 'uniqid';
 
 export default (app) => {
   app
@@ -28,11 +29,15 @@ export default (app) => {
       },
     )
     .post('/users', { name: 'createUser' }, async (req, reply) => {
-      const user = new app.objection.models.user();
-      user.$set(req.body.data);
+      // const user = new app.objection.models.user();
+      //
+      // user.$set(req.body.data);
 
       try {
-        const validUser = await app.objection.models.user.fromJson(req.body.data);
+        const user = req.body.data;
+        user.id = uniqid();
+
+        const validUser = await app.objection.models.user.fromJson(user);
         await app.objection.models.user.query().insert(validUser);
         req.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));

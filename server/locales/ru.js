@@ -24,6 +24,9 @@ export default {
     layouts: {
       application: {
         users: 'Пользователи',
+        statuses: 'Статусы',
+        tasks: 'Задачи',
+        labels: 'Метки',
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
@@ -60,6 +63,21 @@ export default {
           description: 'Практические курсы по программированию',
           more: 'Узнать Больше',
         },
+      },
+      statuses: {
+        id: 'ID',
+        name: 'Наименование',
+        createdAt: 'Дата создания',
+        edit: 'Изменить',
+        createBtn: 'Создать',
+        new: {
+          submit: 'Создать',
+          signUp: 'Регистрация',
+        },
+        create: ' Создать статус',
+        delete: 'Удалить',
+        createTitle: 'Создание статуса',
+        editTitle: 'Изменение статуса',
       },
     },
   },

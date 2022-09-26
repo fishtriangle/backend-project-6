@@ -11,12 +11,13 @@ html(lang="en")
     header.p-3.bg-dark.text-white
       .container
         .d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start
-          a.d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none.fs-2.me-4.fw-lighter(href=route('root'))= t('appName')
+          a.d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none.h2.me-4.fw-lighter(href=route('root'))= t('appName')
           ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-center.mb-md-0
             li
               a.nav-link.px-2.text-secondary(href=route('users'))= t('layouts.application.users')
-          .text-end
+          .text-end.d-flex
             if isAuthenticated()
+              a.btn.btn-outline-light.me-2(href=route('statuses'))= t('layouts.application.statuses')
               +buttonTo(route('session'), 'delete')(class="btn btn-warning" value=t('layouts.application.signOut'))
             else
               a.btn.btn-outline-light.me-2(href=route('newSession'))= t('layouts.application.signIn')
@@ -49,7 +50,7 @@ html(lang="en")
         each message in messages
           div.alert(class=`alert-${getAlertClass(type)}`)= message
 
-      h1.my-4
+      h3.my-4
         block header
       block content
 

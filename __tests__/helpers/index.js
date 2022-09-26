@@ -17,7 +17,7 @@ import encrypt from '../../server/lib/secure.cjs';
 
 function createRandomUser() {
   return {
-    id: faker.datatype.number(),
+    id: faker.datatype.uuid(),
     // username: faker.internet.userName(),
     email: faker.internet.email(),
     // avatar: faker.image.avatar(),

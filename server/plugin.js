@@ -95,7 +95,12 @@ const registerPlugins = (app) => {
   });
 
   fastifyPassport.registerUserDeserializer(
-    (user) => app.objection.models.user.query().findById(user.id),
+    (user) => {
+      // console.log('USER: ', user);
+      return app.objection.models.user.query().findOne({
+        email: user.email,
+      });
+    },
   );
   fastifyPassport.registerUserSerializer((user) => Promise.resolve(user));
   fastifyPassport.use(new FormStrategy('form', app));
