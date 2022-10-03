@@ -2,7 +2,8 @@
 
 export const up = (knex) => (
   knex.schema.createTable('users', (table) => {
-    table.string('id').primary();
+    table.increments('id_counter').primary();
+    table.string('id');
     table.string('email');
     table.string('password_digest');
     table.timestamp('created_at').defaultTo(knex.fn.now());

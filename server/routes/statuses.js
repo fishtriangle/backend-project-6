@@ -33,7 +33,9 @@ export default (app) => {
       { name: 'createStatus', preValidation: app.authenticate },
       async (req, reply) => {
         const status = req.body.data;
-        status.id = uniqid();
+        if (!status.id) {
+          status.id = uniqid();
+        }
         try {
           const validStatus = await app.objection.models.status.fromJson(status);
           await app.objection.models.status.query().insert(validStatus);
@@ -58,8 +60,10 @@ export default (app) => {
           const {
             body: { data },
           } = req;
+          // console.log('DATA: ', data);
           const patchData = _.omit(data, 'id');
           const status = await app.objection.models.status.query().findById(req.params.id);
+          // console.log('OLDDATA: ', status);
           await status.$query().patch(patchData);
           req.flash('success', i18next.t('flash.statuses.edit.success'));
           reply.redirect(app.reverse('statuses'));

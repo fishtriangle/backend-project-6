@@ -11,4 +11,5 @@ block content
     +input(user, 'lastName', errors)(type="text" placeholder=t('views.users.new.lastName'))
     +input(user, 'email', errors)(type="text" placeholder=t('views.users.new.mail'))
     +input(user, 'password', errors)(type="password" placeholder=t('views.users.new.password'))
-    +submit(user)(value=t('views.users.new.submit'))
+    +submit(user)(class="btn btn-outline-light me-4 fw-normal px-5" value=t('views.users.new.submit'))
+    a.btn.btn-warning.mt-4.px-5(href='/')= t('views.statuses.cancel')

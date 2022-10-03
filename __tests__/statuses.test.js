@@ -1,8 +1,8 @@
 // @ts-check
 
+import fastify from 'fastify';
 import init from '../server/plugin.js';
 import { getTestData, prepareData, getCookie } from './helpers/index.js';
-import fastify from "fastify";
 
 describe('test statuses CRUD', () => {
   let app;
@@ -22,7 +22,7 @@ describe('test statuses CRUD', () => {
   beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
-    testData = getTestData();
+    testData = await getTestData(app);
     cookie = await getCookie(app, testData.users.existing);
   });
 
@@ -108,6 +108,7 @@ describe('test statuses CRUD', () => {
 
   it('Authorized user can edit status', async () => {
     const existingStatus = testData.statuses.existing;
+    // console.log('EXISITING: ', existingStatus);
     const updatedStatusFixture = testData.statuses.updated;
 
     const { id } = await models.status.query().findOne({ name: existingStatus.name });
@@ -124,6 +125,8 @@ describe('test statuses CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     const updatedStatus = await models.status.query().findById(id);
+    // console.log('ID: ', id);
+    updatedStatusFixture.id = id;
     expect(updatedStatus).toMatchObject(updatedStatusFixture);
   });
 

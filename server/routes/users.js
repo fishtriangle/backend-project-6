@@ -30,7 +30,9 @@ export default (app) => {
     )
     .post('/users', { name: 'createUser' }, async (req, reply) => {
       const user = req.body.data;
-      user.id = uniqid();
+      if (!user.id) {
+        user.id = uniqid();
+      }
       try {
         const validUser = await app.objection.models.user.fromJson(user);
         await app.objection.models.user.query().insert(validUser);
@@ -102,7 +104,7 @@ export default (app) => {
         req.logOut();
         req.flash('info', i18next.t('flash.users.delete.success'));
         // }
-        console.log('4');
+        // console.log('4');
         reply.redirect('/users');
         return reply;
       },

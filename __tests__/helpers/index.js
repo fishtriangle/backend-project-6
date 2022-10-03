@@ -27,27 +27,45 @@ function createRandomUser() {
   };
 }
 
+function createRandomStatus() {
+  return {
+    id: faker.datatype.uuid(),
+    name: faker.word.adjective(),
+    // registeredAt: faker.date.past(),
+  };
+}
+
 // export const getTestData = () => getFixtureData('testData.json');
 export const getTestData = async (app) => {
-  const users = {
+  const fixtures = {
     users: {
       new: createRandomUser(),
       existing: createRandomUser(),
       updated: createRandomUser(),
       other: createRandomUser(),
     },
+    statuses: {
+      new: createRandomStatus(),
+      updated: createRandomStatus(),
+      existing: createRandomStatus(),
+    },
   };
 
   const { knex } = app.objection;
 
-  const usersList = Object.values(users.users)
-    .filter(({ id }) => ((id === users.users.existing.id) || (id === users.users.other.id)))
+  const usersList = Object.values(fixtures.users)
+    .filter(({ id }) => ((id === fixtures.users.existing.id) || (id === fixtures.users.other.id)))
     .map(({ id, email, password }) => ({ id, email, passwordDigest: encrypt(password) }));
   // console.log('HELPERS', usersList);
 
   await knex('users').insert(usersList);
 
-  return users;
+  const statusList = Object.values(fixtures.statuses)
+    .filter(({ id }) => (id === fixtures.statuses.existing.id));
+  // console.log('StatusList: ', statusList);
+  await knex('statuses').insert(statusList);
+
+  return fixtures;
 };
 
 export const prepareData = async (app) => {

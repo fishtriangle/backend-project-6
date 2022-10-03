@@ -15,16 +15,21 @@ describe('test users CRUD', () => {
 
   beforeAll(async () => {
     app = fastify({ logger: { prettyPrint: true } });
-
+    // console.log('1');
     await init(app);
+    // console.log('APP: ', app);
     knex = app.objection.knex;
+    // console.log('3');
     models = app.objection.models;
+    // console.log('4');
   });
 
   beforeEach(async () => {
+    // console.log('2');
     await knex.migrate.latest();
     await prepareData(app);
     testData = await getTestData(app);
+    // console.log('5');
     cookie = await getCookie(app, testData.users.existing);
     // console.log('COOKIES: ', cookie);
   });

@@ -122,7 +122,7 @@ const registerPlugins = (app) => {
     // console.log(request.user);
     // console.log(request.params.id);
     if (request.user?.id !== request.params.id) {
-      console.log('error checkUserPermission');
+      // console.log('error checkUserPermission');
       request.flash('error', i18next.t('flash.users.authError'));
       reply.redirect('/users');
     }
