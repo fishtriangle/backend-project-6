@@ -6,4 +6,5 @@ block header
 block content
   +formFor()(action=route('createStatus') method='post')
     +input('status', 'name', errors)(type="text")
-    +submit('status')(class="fw-normal px-5" value=t('views.statuses.createBtn'))
+    +submit('status')(class="btn btn-outline-light me-4 fw-normal px-5" value=t('views.statuses.createBtn'))
+    a.btn.btn-warning.mt-4.px-5(href=route('statuses'))= t('views.statuses.cancel')

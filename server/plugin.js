@@ -24,7 +24,6 @@ import getHelpers from './helpers/index.js';
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
-// import User from "./models/User.js";
 
 dotenv.config();
 
@@ -95,12 +94,10 @@ const registerPlugins = (app) => {
   });
 
   fastifyPassport.registerUserDeserializer(
-    (user) => {
-      // console.log('USER: ', user);
-      return app.objection.models.user.query().findOne({
-        email: user.email,
-      });
-    },
+    (user) => app.objection.models.user.query().findOne({
+      email: user.email,
+    })
+    ,
   );
   fastifyPassport.registerUserSerializer((user) => Promise.resolve(user));
   fastifyPassport.use(new FormStrategy('form', app));
@@ -124,7 +121,7 @@ const registerPlugins = (app) => {
   app.decorate('checkUserPermission', async (request, reply) => {
     // console.log(request.user);
     // console.log(request.params.id);
-    if (request.user?.id !== parseInt(request.params.id, 10)) {
+    if (request.user?.id !== request.params.id) {
       console.log('error checkUserPermission');
       request.flash('error', i18next.t('flash.users.authError'));
       reply.redirect('/users');

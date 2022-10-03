@@ -29,14 +29,9 @@ export default (app) => {
       },
     )
     .post('/users', { name: 'createUser' }, async (req, reply) => {
-      // const user = new app.objection.models.user();
-      //
-      // user.$set(req.body.data);
-
+      const user = req.body.data;
+      user.id = uniqid();
       try {
-        const user = req.body.data;
-        user.id = uniqid();
-
         const validUser = await app.objection.models.user.fromJson(user);
         await app.objection.models.user.query().insert(validUser);
         req.flash('info', i18next.t('flash.users.create.success'));
@@ -63,18 +58,18 @@ export default (app) => {
             body: { data },
           } = req;
           const patchData = _.omit(data, 'id');
-          console.log('1');
+          // console.log('1');
           const user = await app.objection.models.user.query().findById(req.params.id);
-          console.log('2', patchData);
+          // console.log('2', patchData);
           // console.log(await app.objection.models.user.query());
           await user.$query().patch(patchData);
-          console.log('3');
+          // console.log('3');
           req.flash('success', i18next.t('flash.users.edit.success'));
           reply.redirect(app.reverse('users'));
           return reply;
         } catch (error) {
           if (error instanceof ValidationError) {
-            console.log(error.data);
+            // console.log(error.data);
             req.flash('error', i18next.t('flash.users.edit.error'));
             const user = new app.objection.models.user();
             user.$set({ ...req.body.data, id: req.params.id });
@@ -95,11 +90,11 @@ export default (app) => {
         preValidation: app.auth([app.checkUserPermission, app.authenticate]),
       },
       async (req, reply) => {
-        console.log('1');
+        // console.log('1');
         const user = await app.objection.models.user.query().findById(req.params.id);
-        console.log('2', user);
+        // console.log('2', user);
         // const usersTasks = await user.$relatedQuery('tasks');
-        console.log('3');
+        // console.log('3');
         // if (usersTasks.length !== 0) {
         //   req.flash('error', i18next.t('flash.users.delete.error'));
         // } else {

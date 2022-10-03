@@ -1,86 +1,96 @@
 // @ts-check
 
-// import i18next from 'i18next';
-// import { ValidationError } from 'objection';
+import i18next from 'i18next';
+import { ValidationError } from 'objection';
+import uniqid from 'uniqid';
+import _ from 'lodash';
 
 export default (app) => {
   app
     .get('/statuses', { name: 'statuses', preValidation: app.authenticate }, async (req, reply) => {
-      // const statuses = await app.objection.models.status.query();
-      reply.render('statuses/index'/* , { statuses } */);
+      const statuses = await app.objection.models.status.query();
+      reply.render('statuses/index', { statuses });
       return reply;
     })
-    .get('/statuses/new', { name: 'createStatus', preValidation: app.authenticate }, (req, reply) => {
-    // const status = new app.objection.models.status();
-      reply.render('statuses/new'/* , { status } */);
-    });
-  // .post(
-  //   '/statuses',
-  //   { name: 'statusCreate', preValidation: app.authenticate },
-  //   async (req, reply) => {
-  //     try {
-  //       const status = await app.objection.models.status
-  //         .fromJson(req.body.data);
-  //       await app.objection.models.status.query().insert(status);
-  //       req.flash('info', i18next.t('flash.statuses.create.success'));
-  //       reply.redirect(app.reverse('statuses'));
-  //       return reply;
-  //     } catch (error) {
-  //       if (error instanceof ValidationError) {
-  //         req.flash('error', i18next.t('flash.statuses.create.error'));
-  //         reply.render('statuses/new', { status: req.body.data, errors: error.data });
-  //         return reply.code(422);
-  //       }
-  //       throw error;
-  //     }
-  //   },
-  // )
-  // .get(
-  //   '/statuses/:id/edit',
-  //   { name: 'statusEdit', preValidation: app.authenticate },
-  //   async (req, reply) => {
-  //     const status = await app.objection.models.status.query().findById(req.params.id);
-  //     reply.render('statuses/edit', { status });
-  //     return reply;
-  //   },
-  // )
-  // .patch(
-  //   '/statuses/:id',
-  //   { name: 'statusUpdate', preValidation: app.authenticate },
-  //   async (req, reply) => {
-  //     try {
-  //       const status = await app.objection.models.status.query().findById(req.params.id);
-  //       await status.$query().patch(req.body.data);
-  //       req.flash('success', i18next.t('flash.statuses.edit.success'));
-  //       reply.redirect(app.reverse('statuses'));
-  //       return reply;
-  //     } catch (error) {
-  //       if (error instanceof ValidationError) {
-  //         req.flash('error', i18next.t('flash.statuses.edit.error'));
-  //         reply.render('statuses/edit', {
-  //           status: { ...req.body.data, id: req.params.id },
-  //           errors: error.data,
-  //         });
-  //         return reply.code(422);
-  //       }
-  //       throw error;
-  //     }
-  //   },
-  // )
-  // .delete(
-  //   '/statuses/:id',
-  //   { name: 'statusDelete', preValidation: app.authenticate },
-  //   async (req, reply) => {
-  //     const status = await app.objection.models.status.query().findById(req.params.id);
-  //     const statusTasks = await status.$relatedQuery('tasks');
-  //     if (statusTasks.length !== 0) {
-  //       req.flash('error', i18next.t('flash.statuses.delete.error'));
-  //     } else {
-  //       await status.$query().delete();
-  //       req.flash('info', i18next.t('flash.statuses.delete.success'));
-  //     }
-  //     reply.redirect(app.reverse('statuses'));
-  //     return reply;
-  //   },
-  // );
+    .get('/statuses/new', { name: 'getStatusPage', preValidation: app.authenticate }, (req, reply) => {
+      const status = new app.objection.models.status();
+      reply.render('statuses/new', { status });
+    })
+    .get(
+      '/statuses/:id/edit',
+      { name: 'editStatus', preValidation: app.authenticate },
+      async (req, reply) => {
+        // console.log(req.params);
+        const status = await app.objection.models.status.query().findById(req.params.id);
+        console.log('status', status);
+        reply.render('statuses/edit', { status });
+        console.log('3');
+        return reply;
+      },
+    )
+    .post(
+      '/statuses',
+      { name: 'createStatus', preValidation: app.authenticate },
+      async (req, reply) => {
+        const status = req.body.data;
+        status.id = uniqid();
+        try {
+          const validStatus = await app.objection.models.status.fromJson(status);
+          await app.objection.models.status.query().insert(validStatus);
+          req.flash('info', i18next.t('flash.statuses.create.success'));
+          reply.redirect(app.reverse('statuses'));
+        } catch (error) {
+          if (error instanceof ValidationError) {
+            req.flash('error', i18next.t('flash.statuses.create.error'));
+            reply.render('statuses/new', { status: req.body.data, errors: error.data });
+            return reply.code(422);
+          }
+          console.error(error);
+        }
+        return reply;
+      },
+    )
+    .patch(
+      '/statuses/:id',
+      { name: 'updateStatus', preValidation: app.authenticate },
+      async (req, reply) => {
+        try {
+          const {
+            body: { data },
+          } = req;
+          const patchData = _.omit(data, 'id');
+          const status = await app.objection.models.status.query().findById(req.params.id);
+          await status.$query().patch(patchData);
+          req.flash('success', i18next.t('flash.statuses.edit.success'));
+          reply.redirect(app.reverse('statuses'));
+          return reply;
+        } catch (error) {
+          if (error instanceof ValidationError) {
+            req.flash('error', i18next.t('flash.statuses.edit.error'));
+            reply.render('statuses/edit', {
+              status: { ...req.body.data, id: req.params.id },
+              errors: error.data,
+            });
+            return reply.code(422);
+          }
+          throw error;
+        }
+      },
+    )
+    .delete(
+      '/statuses/:id',
+      { name: 'deleteStatus', preValidation: app.authenticate },
+      async (req, reply) => {
+        const status = await app.objection.models.status.query().findById(req.params.id);
+        // const statusTasks = await status.$relatedQuery('tasks');
+        // if (statusTasks.length !== 0) {
+        //   req.flash('error', i18next.t('flash.statuses.delete.error'));
+        // } else {
+        await status.$query().delete();
+        req.flash('info', i18next.t('flash.statuses.delete.success'));
+        // }
+        reply.redirect(app.reverse('statuses'));
+        return reply;
+      },
+    );
 };

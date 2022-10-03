@@ -29,7 +29,7 @@ describe('test users CRUD', () => {
     // console.log('COOKIES: ', cookie);
   });
 
-  it('Get /users page with status 200', async () => {
+  it('Get /users page with code 200', async () => {
     const response = await app.inject({
       method: 'GET',
       url: app.reverse('users'),
@@ -38,7 +38,7 @@ describe('test users CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
-  it('Get /users/new page with status 200', async () => {
+  it('Get /users/new page with code 200', async () => {
     const response = await app.inject({
       method: 'GET',
       url: app.reverse('newUser'),
@@ -47,7 +47,7 @@ describe('test users CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
-  it('Get user edit page with status 200', async () => {
+  it('Get user edit page with code 200', async () => {
     const existingUserFixtures = testData.users.existing;
     // console.log('1', existingUserFixtures.email)
     // console.log('2', await models.user.query())

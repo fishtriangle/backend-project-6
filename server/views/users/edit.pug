@@ -1,0 +1,15 @@
+extends ../layouts/application.pug
+
+block header
+    = t('views.users.editTitle')
+
+
+block content
+    +formFor()(action=('/users/' + user.id) method='post')
+        +input(user, 'firstName', errors)(type="text")
+        +input(user, 'lastName', errors)(type="text")
+        +input(user, 'email', errors)(type="text")
+        +input(user, 'password', errors)(type="password")
+        input(name='_method' type='hidden' value='patch')
+        +submit(user)(class="btn btn-outline-light me-4" value=t('views.users.edit'))
+        a.btn.btn-warning.mt-4.px-5(href=route('users'))= t('views.statuses.cancel')

@@ -24,7 +24,7 @@ mixin input(entity, propertyName, errors = {})
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
 mixin submit(form = null)
-  input(class='btn btn-warning px-5 mt-4' type='submit')&attributes(attributes)
+  input(class='btn px-5 mt-4' type='submit')&attributes(attributes)
 
 mixin buttonTo(action, method)
   form(action=action, method="post")

@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-    a.a.btn.btn-dark.mb-4(href=route('createStatus'))= t('views.statuses.create')
+    a.a.btn.btn-dark.mb-4(href=route('getStatusPage'))= t('views.statuses.create')
     table.table.table-striped
         thead
             tr
@@ -9,11 +9,11 @@ block content
                 th= t('views.statuses.name')
                 th= t('views.statuses.createdAt')
         tbody
-          // each status in statuses
+           each status in statuses
               tr
                   td= status.id
-                  td= status.name
+                  td.w-50= status.name
                   td= formatDate(status.createdAt)
-                  td
-                      a.btn.btn-outline-light.me-2(href=route('statusEdit', { id: status.id }))= t('views.statuses.edit')
-                      +buttonTo(route('statusDelete', { id: status.id }), 'delete')(class="btn btn-warning" value=t('views.statuses.delete'))
+                  td.d-flex.flex-row
+                      a.btn.btn-dark.me-2(href='/statuses/' + status.id + '/edit')= t('views.statuses.edit')
+                      +buttonTo('/statuses/' + status.id, 'delete')(class="btn btn-warning" value=t('views.statuses.delete'))
