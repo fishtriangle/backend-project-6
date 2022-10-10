@@ -16,6 +16,7 @@ import fastifyObjectionjs from 'fastify-objectionjs';
 import qs from 'qs';
 import Pug from 'pug';
 import i18next from 'i18next';
+import Rollbar from 'rollbar';
 import ru from './locales/ru.js';
 // @ts-ignore
 
@@ -24,7 +25,6 @@ import getHelpers from './helpers/index.js';
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
-import webpackConfig from '../webpack.config.js';
 
 dotenv.config();
 
@@ -33,6 +33,12 @@ const __dirname = fileURLToPath(path.dirname(import.meta.url));
 const mode = process.env.NODE_ENV || 'development';
 const isDevelopment = mode === 'development';
 const isProduction = mode === 'production';
+
+const rollbar = new Rollbar({
+  accessToken: process.env.ROLLBAR_TOKEN,
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+});
 
 const setUpViews = (app) => {
   const helpers = getHelpers(app);
@@ -83,13 +89,13 @@ const addHooks = (app) => {
   });
 };
 
-const addErrorHadlers = (app) => {
+const addErrorHandlers = (app) => {
   app.setErrorHandler((error, request, reply) => {
     const isUnhandledInternalError = reply.raw.statusCode === 500
       && error.explicitInternalServerError !== true;
     const errorMessage = isUnhandledInternalError ? 'Something went wrong!!!' : error.message;
     request.log.error(error);
-
+    if (isProduction) rollbar.log(error);
     request.flash('error', errorMessage);
     reply.redirect('/');
   });
@@ -159,6 +165,7 @@ export default async (app, options) => {
   // console.log('11');
   registerPlugins(app);
   // console.log('12');
+  addErrorHandlers(app);
   await setupLocalization();
   // console.log('13');
   setUpViews(app);
