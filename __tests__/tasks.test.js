@@ -70,30 +70,6 @@ describe('test statuses CRUD', () => {
     // cookie = await getCookie(app, testData.users.existing);
   });
 
-  it('Create new task', async () => {
-    const expectedTask = testData.tasks.new;
-    const currentUser = await app.objection.models.user.query().findOne({
-      email: testData.users.existing.email,
-    });
-    expectedTask.creatorId = currentUser.id;
-    // console.log('EXPECTED: ', expectedTask);
-
-    const response = await app.inject({
-      method: 'POST',
-      url: app.reverse('createTask'),
-      cookies: cookie,
-      payload: {
-        data: expectedTask,
-      },
-    });
-
-    expect(response.statusCode).toBe(302);
-
-    const newTask = await models.task.query().findOne({ name: expectedTask.name });
-    // console.log('NEW TASK: ', newTask);
-    expect(newTask).toMatchObject(expectedTask);
-  });
-
   describe('GET requests', () => {
     test.each(
       templatesTestsData.map(({
@@ -116,6 +92,30 @@ describe('test statuses CRUD', () => {
 
       expect(response.statusCode).toBe(statusCode);
     });
+  });
+
+  it('Create new task', async () => {
+    const expectedTask = testData.tasks.new;
+    const currentUser = await app.objection.models.user.query().findOne({
+      email: testData.users.existing.email,
+    });
+    expectedTask.creatorId = currentUser.id;
+    // console.log('EXPECTED: ', expectedTask);
+
+    const response = await app.inject({
+      method: 'POST',
+      url: app.reverse('createTask'),
+      cookies: cookie,
+      payload: {
+        data: expectedTask,
+      },
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    const newTask = await models.task.query().findOne({ name: expectedTask.name });
+    // console.log('NEW TASK: ', newTask);
+    expect(newTask).toMatchObject(expectedTask);
   });
 
   const patchTaskTemplate = [

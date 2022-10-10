@@ -82,7 +82,7 @@ export default (app) => {
     })
     .post('/tasks', { name: 'createTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = req.body.data;
-      // console.log('TASK: ', task);
+      console.log('TASK: ', task);
       const {
         name, description, statusId, responsibleId, labels,
       } = task;
@@ -90,7 +90,7 @@ export default (app) => {
       const labelIds = [labels].flat().map((id) => ({ id: parseInt(id, 10) }));
 
       try {
-        // console.log('creatorId', req.user.id);
+        console.log('creatorId', req.user.id);
         const validTask = await app.objection.models.task.fromJson({
           name,
           description,
@@ -99,20 +99,20 @@ export default (app) => {
           ...(responsibleId && { responsibleId: parseInt(responsibleId, 10) }),
           ...(statusId && { statusId: parseInt(statusId, 10) }),
         });
-        // console.log('1', validTask);
+        console.log('1', validTask);
         await app.objection.models.task.transaction(async (trx) => {
           await app.objection.models.task.query(trx)
             .insertGraph([{ ...validTask, labels: labelIds }], {
               relate: ['labels'],
             });
         });
-        // console.log('2');
+        console.log('2');
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
         return reply;
       } catch (error) {
         if (error instanceof ValidationError) {
-          // console.log('ERROR: ', error);
+          console.log('ERROR: ', error);
           req.flash('error', i18next.t('flash.tasks.create.error'));
           const validTask = new app.objection.models.task().$set(req.body.data);
           const [users, statuses, labelList] = await Promise.all([
