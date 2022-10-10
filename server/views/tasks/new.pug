@@ -10,4 +10,5 @@ block content
         +select(task, 'statusId', errors, statuses)
         +select(task, 'responsibleId', errors, users)
         +selectMultiple(task, 'labels', errors, labels)
-        +submit(task)(value=t('views.tasks.new.submit'))
+        +submit(task)(class="btn btn-outline-light me-3" value=t('views.tasks.new.submit'))
+        a.btn.btn-warning.mt-4.px-5(href=route('tasks'))= t('views.statuses.cancel')

@@ -1,14 +1,14 @@
 extends ../layouts/application.pug
 
 block content
-    a.nav-link(href=route('taskNew'))= t('views.tasks.create')
-    .jumbotron.p-2
+    a.a.btn.btn-dark.mb-4(href=route('newTask'))= t('views.tasks.create')
+    .jumbotron.p-2.mb-3
         +formFor()(action=route('tasks') method='get' class="form-inline")
-            +filterSelect('task', 'status', statuses)
-            +filterSelect('task', 'executor', users)
-            +filterSelect('task', 'label', labels)
-            +checkbox('task','isCreatorUser')
-            +submit()(value=t('views.tasks.filter'))
+            +filterSelect('tasks', 'status', statuses)
+            +filterSelect('tasks', 'executor', users)
+            +filterSelect('tasks', 'label', labels)
+            +checkbox('tasks','isCreatorUser')
+            +submit()(class="btn btn-outline-light" value=t('views.tasks.filter'))
     table.table.table-striped
         thead
             tr
@@ -24,7 +24,7 @@ block content
               tr
                   td= task.id
                   td
-                      a(href=route('taskShow', { id: task.id }))= task.name
+                      a(href=route('showTask', { id: task.id }))= task.name
                   td= task.status.name
                   td= `${task.creator.name}`
                   if task.executor
@@ -32,6 +32,6 @@ block content
                   else
                       td
                   td= formatDate(task.createdAt)
-                  td
-                      a(href=route('taskEdit', { id: task.id }))= t('views.tasks.edit')
-                      +buttonTo(route('taskDelete', { id: task.id }), 'delete')(class="btn btn-link" value=t('views.tasks.delete'))
+                  td.d-flex
+                      a.btn.btn-dark.m-1(href=route('editTask', { id: task.id }))= t('views.tasks.edit')
+                      +buttonTo(route('deleteTask', { id: task.id }), 'delete')(class="btn btn-warning m-1" value=t('views.tasks.delete'))

@@ -2,8 +2,6 @@
 
 import i18next from 'i18next';
 import { ValidationError } from 'objection';
-import _ from 'lodash';
-import uniqid from 'uniqid';
 
 export default (app) => {
   app

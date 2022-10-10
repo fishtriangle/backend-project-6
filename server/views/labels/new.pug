@@ -1,0 +1,10 @@
+extends ../layouts/application.pug
+
+block header
+    = t('views.labels.createTitle')
+
+block content
+    +formFor()(action=route('createLabel') method='post')
+        +input(lable, 'name', errors)(type="text")
+        +submit(lable)(class="btn btn-outline-light me-4 fw-normal px-5" value=t('views.labels.new.submit'))
+        a.btn.btn-warning.mt-4.px-5(href=route('labels'))= t('views.statuses.cancel')

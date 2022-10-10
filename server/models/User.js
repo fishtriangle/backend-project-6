@@ -1,14 +1,11 @@
 // @ts-check
 import _ from 'lodash';
 import objectionUnique from 'objection-unique';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import BaseModel from './BaseModel.cjs';
 import encrypt from '../lib/secure.cjs';
-import Task from "./Task.js";
+import Task from './Task.js';
 
 const unique = objectionUnique({ fields: ['email'] });
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default class User extends unique(BaseModel) {
   $parseJson(json, options) {

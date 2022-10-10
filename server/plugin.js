@@ -35,10 +35,6 @@ const isDevelopment = mode === 'development';
 const isProduction = mode === 'production';
 
 const setUpViews = (app) => {
-  const { devServer } = webpackConfig;
-  const devHost = `http://${devServer.host}:${devServer.port}`;
-  const domain = isDevelopment ? devHost : '';
-
   const helpers = getHelpers(app);
   app.register(pointOfView, {
     engine: {
@@ -47,7 +43,7 @@ const setUpViews = (app) => {
     includeViewExtension: true,
     defaultContext: {
       ...helpers,
-      assetPath: (filename) => `${domain}/assets/${filename}`,
+      assetPath: (filename) => `/assets/${filename}`,
     },
     templates: path.join(__dirname, '..', 'server', 'views'),
   });

@@ -4,7 +4,9 @@ import _ from 'lodash';
 import BaseModel from './BaseModel.cjs';
 // eslint-disable-next-line import/no-cycle
 import User from './User.js';
+// eslint-disable-next-line import/no-cycle
 import Status from './Status.js';
+// eslint-disable-next-line import/no-cycle
 import Label from './Label.js';
 
 export default class Task extends BaseModel {

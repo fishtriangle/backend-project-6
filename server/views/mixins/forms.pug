@@ -1,5 +1,6 @@
 - const getInputName = (property) => `data[${property}]`
 - const getInputId = (property) => `data_${property}`
+- const isItemSelected = (id, ids) => id === ids || _.find(ids, { id })
 
 mixin formFor(entity = null)
   .card.p-5.w-50.m-auto.bg-dark.rounded-3
@@ -10,16 +11,35 @@ mixin input(entity, propertyName, errors = {})
   - propertyErrors = _.get(errors, propertyName)
   - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
-  div.mt-3(class=(errors[propertyName] && 'has-danger'))
-    //label(
-    //  for= inputId
-    //)= propertyName
+  - name = getInputName(propertyName)
+  .form-group.mb-3(class=(errors[propertyName] && 'has-danger'))
+    label.text-white.h5(
+      for= inputId
+    )= t(`layouts.form.${propertyName}`)
     input(
       id= inputId
-      name=getInputName(propertyName)
+      name= name
       class=classLine
       value=_.get(entity, propertyName, '')
     )&attributes(attributes)
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin textarea(entity, propertyName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (!propertyErrors ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  - name = getInputName(propertyName)
+  - value=_.get(entity, propertyName, '')
+  .form-group.mb-3(class=(errors[propertyName] && 'has-danger'))
+    label.text-white.h5(
+      for= inputId
+    )= t(`layouts.form.${propertyName}`)
+    textarea(
+      id= inputId
+      name= name
+      class= classLine
+    )&attributes(attributes) #{value}
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
@@ -27,10 +47,52 @@ mixin submit(form = null)
   input(class='btn px-5 mt-4' type='submit')&attributes(attributes)
 
 mixin buttonTo(action, method)
-  form(action=action, method="post")
+  form.d-inline(action=action, method="post")
     input(name="_method" type="hidden" value=method)
     input(type='submit')&attributes(attributes)
 
 mixin title()
   p.h2.text-white.fw-light
     block
+
+mixin select(entity, propertyName, errors = {}, items, multiple = false)
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (!propertyErrors ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  - name = getInputName(propertyName)
+  - entityName = entity.constructor.name.toLowerCase()
+  - selectedOptions = entity[propertyName] ? [entity[propertyName]].flat().map((item) => item.id ? Number(item.id) : Number(item)) : []
+  .form-group.mb-3
+    label.text-white.h5(for=inputId)= t(`views.${entityName}s.${propertyName}`)
+    select.form-control(
+      id= inputId,
+      name=name,
+      multiple=multiple
+      class=classLine
+    )
+      if !multiple
+        option
+      each item in items
+        - isSelect = _.includes(selectedOptions, item.id)
+        option(value=item.id, selected= isSelect)= item.name
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin selectMultiple(entity, propertyName, errors = {}, items)
+  +select(entity, propertyName, errors, items, true)
+
+mixin filterSelect(entityName, propertyName, items)
+  - inputId = getInputId(propertyName)
+  .form-group
+    label.h5.text-white(for=inputId)= t(`views.${entityName}.filters.${propertyName}`)
+    select.form-control.ml-2.mr-3.mb-3(id= inputId, name=propertyName)
+      option
+      each item in items
+        option(value=item.id, selected= item.id == query[propertyName])= item.name
+
+mixin checkbox(entityName, propertyName)
+  - inputId = getInputId(propertyName)
+  - name = getInputName(propertyName)
+  .form-group.form-check
+    input.form-check-input(id= inputId type='checkbox', name=propertyName, checked=(!!query[propertyName]))
+    label.form-check-label.text-white(for=inputId)= t(`views.${entityName}.filters.${propertyName}`)

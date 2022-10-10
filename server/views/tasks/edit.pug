@@ -4,11 +4,12 @@ block header
     = t('views.tasks.editTitle')
 
 block content
-    +formFor()(action=route('taskUpdate', { id: task.id }) method='post')
+    +formFor()(action=route('updateTask', { id: task.id }) method='post')
         +input(task, 'name', errors)(type="text")
         +textarea(task, 'description', errors)(rows="3")
         +select(task, 'statusId', errors, statuses)
         +select(task, 'responsibleId', errors, users)
         +selectMultiple(task, 'labels', errors, labels)
         input(name='_method' type='hidden' value='patch')
-        +submit(task)(value=t('views.tasks.edit'))
+        +submit(task)(class="btn btn-outline-light me-3" value=t('views.tasks.edit'))
+        a.btn.btn-warning.mt-4.px-5(href=route('tasks'))= t('views.statuses.cancel')

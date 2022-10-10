@@ -10,7 +10,7 @@ export default {
           error: 'Неправильный емейл или пароль',
         },
         delete: {
-          success: 'Вы разлогинены',
+          success: 'Вы вышли из аккаунта',
         },
       },
       users: {
@@ -164,7 +164,7 @@ export default {
         },
         delete: 'Удалить',
         create: 'Создать задачу',
-        createTitle: 'Создание задачи',
+        titleItem: 'Задача',
         editTitle: 'Изменение задачи',
         actions: '',
         status: 'Статус',

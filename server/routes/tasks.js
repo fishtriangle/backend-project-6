@@ -11,7 +11,7 @@ export default (app) => {
         user: { id },
       } = req;
 
-      // console.log('QUERY: ', query);
+      console.log('QUERY: ', query);
 
       const tasksQuery = app.objection.models.task
         .query()
