@@ -2,8 +2,6 @@
 
 import i18next from 'i18next';
 import { ValidationError } from 'objection';
-import uniqid from 'uniqid';
-import _ from 'lodash';
 
 export default (app) => {
   app
@@ -26,9 +24,9 @@ export default (app) => {
       async (req, reply) => {
         // console.log(req.params);
         const status = await app.objection.models.status.query().findById(req.params.id);
-        console.log('status', status);
+        // console.log('status', status);
         reply.render('statuses/edit', { status });
-        console.log('3');
+        // console.log('3');
         return reply;
       },
     )

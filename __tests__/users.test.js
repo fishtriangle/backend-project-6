@@ -67,7 +67,7 @@ describe('test users CRUD', () => {
     // console.log('2', await models.user.query())
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
     // console.log('3', id);
-    console.log('3', cookie);
+    // console.log('3', cookie);
     const response = await app.inject({
       method: 'GET',
       // url: `/users/${id}/edit`,

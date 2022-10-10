@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import BaseModel from './BaseModel.cjs';
+// eslint-disable-next-line import/no-cycle
 import Task from './Task.js';
 
 export default class Label extends BaseModel {

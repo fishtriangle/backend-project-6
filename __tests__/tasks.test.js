@@ -76,7 +76,7 @@ describe('test statuses CRUD', () => {
       email: testData.users.existing.email,
     });
     expectedTask.creatorId = currentUser.id;
-    console.log('EXPECTED: ', expectedTask);
+    // console.log('EXPECTED: ', expectedTask);
 
     const response = await app.inject({
       method: 'POST',
@@ -90,7 +90,7 @@ describe('test statuses CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     const newTask = await models.task.query().findOne({ name: expectedTask.name });
-    console.log('NEW TASK: ', newTask);
+    // console.log('NEW TASK: ', newTask);
     expect(newTask).toMatchObject(expectedTask);
   });
 
@@ -216,7 +216,7 @@ describe('test statuses CRUD', () => {
   it('User can delete task', async () => {
     const existingTask = testData.tasks.existing;
     const { id } = await models.task.query().findOne({ name: existingTask.name });
-    console.log('ID: ', id);
+    // console.log('ID: ', id);
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteTask', { id }),

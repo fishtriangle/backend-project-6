@@ -13,7 +13,7 @@ export default class FormStrategy extends Strategy {
     // console.log('AUTH');
     // console.log(request.params);
     if (request.isAuthenticated()) {
-      console.log('AUTH SUCCESS 1');
+      // console.log('AUTH SUCCESS 1');
       return this.pass();
     }
 
@@ -22,10 +22,10 @@ export default class FormStrategy extends Strategy {
     const { models } = this.app.objection;
     const user = await models.user.query().findOne({ email });
     if (user && user.verifyPassword(password)) {
-      console.log('AUTH SUCCESS 2');
+      // console.log('AUTH SUCCESS 2');
       return this.success(user);
     }
-    console.log('AUTH FAIL');
+    // console.log('AUTH FAIL');
     return this.fail();
   }
 }

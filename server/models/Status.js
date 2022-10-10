@@ -3,6 +3,7 @@
 import objectionUnique from 'objection-unique';
 import _ from 'lodash';
 import BaseModel from './BaseModel.cjs';
+// eslint-disable-next-line import/no-cycle
 import Task from './Task.js';
 
 const unique = objectionUnique({ fields: ['name'] });

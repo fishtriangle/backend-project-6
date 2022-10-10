@@ -142,10 +142,10 @@ const registerPlugins = (app) => {
     models,
   });
   app.decorate('checkUserPermission', async (request, reply) => {
-    console.log('checkUserPermission');
-    console.log(request.user.id, request.params.id);
+    // console.log('checkUserPermission');
+    // console.log(request.user.id, request.params.id);
     if (request.user?.id !== parseInt(request.params.id, 10)) {
-      console.log('error checkUserPermission');
+      // console.log('error checkUserPermission');
       request.flash('error', i18next.t('flash.users.authError'));
       reply.redirect('/users');
     }

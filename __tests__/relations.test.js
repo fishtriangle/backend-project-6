@@ -32,7 +32,7 @@ describe('test relations CRUD', () => {
     // await knex.migrate.latest();
     // await prepareData(app);
     // testData = await getTestData(app);
-    // // console.log('5');
+    // console.log('5');
     // cookie = await getCookie(app, testData.users.existing);
   });
 

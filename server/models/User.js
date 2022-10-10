@@ -3,6 +3,7 @@ import _ from 'lodash';
 import objectionUnique from 'objection-unique';
 import BaseModel from './BaseModel.cjs';
 import encrypt from '../lib/secure.cjs';
+// eslint-disable-next-line import/no-cycle
 import Task from './Task.js';
 
 const unique = objectionUnique({ fields: ['email'] });
