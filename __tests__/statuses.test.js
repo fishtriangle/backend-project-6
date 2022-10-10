@@ -17,13 +17,17 @@ describe('test statuses CRUD', () => {
     await init(app);
     knex = app.objection.knex;
     models = app.objection.models;
-  });
-
-  beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
     testData = await getTestData(app);
     cookie = await getCookie(app, testData.users.existing);
+  });
+
+  beforeEach(async () => {
+    // await knex.migrate.latest();
+    // await prepareData(app);
+    // testData = await getTestData(app);
+    // cookie = await getCookie(app, testData.users.existing);
   });
 
   it('Get statuses page with code 200', async () => {
@@ -70,6 +74,7 @@ describe('test statuses CRUD', () => {
 
   it('Create new status', async () => {
     const expectStatus = testData.statuses.new;
+    expectStatus.name = `${expectStatus.name}New`;
 
     const response = await app.inject({
       method: 'POST',
@@ -108,9 +113,10 @@ describe('test statuses CRUD', () => {
 
   it('Authorized user can edit status', async () => {
     const existingStatus = testData.statuses.existing;
+
     // console.log('EXISITING: ', existingStatus);
     const updatedStatusFixture = testData.statuses.updated;
-
+    updatedStatusFixture.name = `${updatedStatusFixture.name}New`;
     const { id } = await models.status.query().findOne({ name: existingStatus.name });
 
     const response = await app.inject({
@@ -128,6 +134,15 @@ describe('test statuses CRUD', () => {
     // console.log('ID: ', id);
     updatedStatusFixture.id = id;
     expect(updatedStatus).toMatchObject(updatedStatusFixture);
+
+    await app.inject({
+      method: 'PATCH',
+      url: app.reverse('updateStatus', { id }),
+      cookies: cookie,
+      payload: {
+        data: existingStatus,
+      },
+    });
   });
 
   it('Authorized user can delete status', async () => {

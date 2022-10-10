@@ -24,16 +24,21 @@ import getHelpers from './helpers/index.js';
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
+import webpackConfig from '../webpack.config.js';
 
 dotenv.config();
 
 const __dirname = fileURLToPath(path.dirname(import.meta.url));
 
 const mode = process.env.NODE_ENV || 'development';
-// const isDevelopment = mode === 'development';
-// const isProduction = mode === 'production';
+const isDevelopment = mode === 'development';
+const isProduction = mode === 'production';
 
 const setUpViews = (app) => {
+  const { devServer } = webpackConfig;
+  const devHost = `http://${devServer.host}:${devServer.port}`;
+  const domain = isDevelopment ? devHost : '';
+
   const helpers = getHelpers(app);
   app.register(pointOfView, {
     engine: {
@@ -42,7 +47,7 @@ const setUpViews = (app) => {
     includeViewExtension: true,
     defaultContext: {
       ...helpers,
-      assetPath: (filename) => `/assets/${filename}`,
+      assetPath: (filename) => `${domain}/assets/${filename}`,
     },
     templates: path.join(__dirname, '..', 'server', 'views'),
   });
@@ -53,7 +58,9 @@ const setUpViews = (app) => {
 };
 
 const setUpStaticAssets = (app) => {
-  const pathPublic = path.join(__dirname, '..', 'dist');
+  const pathPublic = isProduction
+    ? path.join(__dirname, '..', 'public')
+    : path.join(__dirname, '..', 'dist', 'public');
   app.register(fastifyStatic, {
     root: pathPublic,
     prefix: '/assets/',
@@ -65,7 +72,7 @@ const setupLocalization = async () => {
     .init({
       lng: 'ru',
       fallbackLng: 'en',
-      // debug: isDevelopment,
+      debug: isDevelopment,
       resources: {
         ru,
       },
@@ -80,10 +87,22 @@ const addHooks = (app) => {
   });
 };
 
+const addErrorHadlers = (app) => {
+  app.setErrorHandler((error, request, reply) => {
+    const isUnhandledInternalError = reply.raw.statusCode === 500
+      && error.explicitInternalServerError !== true;
+    const errorMessage = isUnhandledInternalError ? 'Something went wrong!!!' : error.message;
+    request.log.error(error);
+
+    request.flash('error', errorMessage);
+    reply.redirect('/');
+  });
+};
+
 const registerPlugins = (app) => {
   app.register(fastifyAuth);
   app.register(fastifySensible);
-  app.register(fastifyErrorPage);
+  if (isDevelopment) app.register(fastifyErrorPage);
   app.register(fastifyReverseRoutes);
   app.register(fastifyFormbody, { parser: qs.parse });
   app.register(fastifySecureSession, {
@@ -94,10 +113,12 @@ const registerPlugins = (app) => {
   });
 
   fastifyPassport.registerUserDeserializer(
-    (user) => app.objection.models.user.query().findOne({
-      email: user.email,
-    })
-    ,
+    (user) => {
+      // console.log('HERE?', user);
+      const validUser = app.objection.models.user.query().findOne({ email: user.email });
+      // console.log('HERE?', validUser);
+      return validUser;
+    },
   );
   fastifyPassport.registerUserSerializer((user) => Promise.resolve(user));
   fastifyPassport.use(new FormStrategy('form', app));
@@ -119,28 +140,41 @@ const registerPlugins = (app) => {
     models,
   });
   app.decorate('checkUserPermission', async (request, reply) => {
-    // console.log(request.user);
-    // console.log(request.params.id);
-    if (request.user?.id !== request.params.id) {
-      // console.log('error checkUserPermission');
+    console.log('checkUserPermission');
+    console.log(request.user.id, request.params.id);
+    if (request.user?.id !== parseInt(request.params.id, 10)) {
+      console.log('error checkUserPermission');
       request.flash('error', i18next.t('flash.users.authError'));
       reply.redirect('/users');
+    }
+  });
+
+  app.decorate('checkIfUserCreatedTask', async (request, reply) => {
+    const { creatorId } = await app.objection.models.task.query().findById(request.params.id);
+    if (request.user.id !== creatorId) {
+      request.flash('error', i18next.t('flash.tasks.authError'));
+      reply.redirect('/tasks');
     }
   });
 };
 
 // eslint-disable-next-line no-unused-vars
 export default async (app, options) => {
+  // console.log('11');
   registerPlugins(app);
-
+  // console.log('12');
   await setupLocalization();
+  // console.log('13');
   setUpViews(app);
+  // console.log('14');
   setUpStaticAssets(app);
+  // console.log('15');
   app.after(() => {
     addRoutes(app);
   });
+  // console.log('16');
   addHooks(app);
-
+  // console.log('17');
   return app;
 };
 

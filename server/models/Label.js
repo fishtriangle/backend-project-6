@@ -1,12 +1,10 @@
 // @ts-check
 
-import objectionUnique from 'objection-unique';
 import _ from 'lodash';
 import BaseModel from './BaseModel.cjs';
 import Task from './Task.js';
 
-const unique = objectionUnique({ fields: ['name'] });
-export default class Status extends unique(BaseModel) {
+export default class Label extends BaseModel {
   $parseJson(json, options) {
     const parsed = super.$parseJson(json, options);
     return {
@@ -16,7 +14,7 @@ export default class Status extends unique(BaseModel) {
   }
 
   static get tableName() {
-    return 'statuses';
+    return 'labels';
   }
 
   static get jsonSchema() {
@@ -34,11 +32,15 @@ export default class Status extends unique(BaseModel) {
   static get relationMappings() {
     return {
       tasks: {
-        relation: BaseModel.HasManyRelation,
+        relation: BaseModel.ManyToManyRelation,
         modelClass: Task,
         join: {
-          from: 'statuses.id',
-          to: 'tasks.statusId',
+          from: 'labels.id',
+          through: {
+            from: 'tasks_labels.labelId',
+            to: 'tasks_labels.taskId',
+          },
+          to: 'tasks.id',
         },
       },
     };

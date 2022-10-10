@@ -1,10 +1,14 @@
 // @ts-check
 import _ from 'lodash';
 import objectionUnique from 'objection-unique';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import BaseModel from './BaseModel.cjs';
 import encrypt from '../lib/secure.cjs';
+import Task from "./Task.js";
 
 const unique = objectionUnique({ fields: ['email'] });
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default class User extends unique(BaseModel) {
   $parseJson(json, options) {
@@ -25,13 +29,26 @@ export default class User extends unique(BaseModel) {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['email', 'password', 'id'],
+      required: ['email', 'password'],
       properties: {
-        id: { type: 'string' },
+        id: { type: 'integer' },
         email: { type: 'string', minLength: 1 },
         password: { type: 'string', minLength: 3 },
         firstName: { type: 'string', minLength: 1 },
         lastName: { type: 'string', minLength: 1 },
+      },
+    };
+  }
+
+  static get relationMappings() {
+    return {
+      tasks: {
+        relation: BaseModel.HasManyRelation,
+        modelClass: Task,
+        join: {
+          from: 'users.id',
+          to: 'tasks.creatorId',
+        },
       },
     };
   }

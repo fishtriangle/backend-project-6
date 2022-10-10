@@ -1,0 +1,39 @@
+extends ../layouts/application.pug
+
+block header
+    = t('views.tasks.createTitle')
+
+block content
+    .card
+    .card-header.bg-secondary.text-white
+        h2= task.name
+    .card-body.bg-light
+        p= task.description
+        hr
+        .container
+            .row.p-1
+                .col= t('views.tasks.creator')
+                .col= `${task.creator.name}`
+            .row.p-1
+                .col= t('views.tasks.responsibleId')
+                if task.executor
+                    .col= `${task.executor.name}`
+                else
+                    .col
+            .row.p-1
+                .col= t('views.tasks.statusId')
+                .col= task.status.name
+            .row.p-1
+                .col= t('views.tasks.createdAt')
+                .col= formatDate(task.createdAt)
+            .row.p-1
+                .col
+                    h6= t('views.tasks.labels')
+                    ul
+                      each label in task.labels
+                          li= label.name
+            .row.p-1
+                .col
+                    a(href=route('taskEdit', { id: task.id }))= t('views.tasks.edit')
+                    +buttonTo(route('taskDelete', { id: task.id }), 'delete')(class="btn btn-link" value=t('views.tasks.delete'))
+

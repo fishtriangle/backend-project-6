@@ -23,16 +23,15 @@ export default (app) => {
         preValidation: app.auth([app.checkUserPermission, app.authenticate]),
       },
       async (req, reply) => {
+        // console.log('GET by id: ', req.params.id);
         const user = await app.objection.models.user.query().findById(req.params.id);
+        // console.log('GET by id user: ', user);
         reply.render('users/edit', { user });
         return reply;
       },
     )
     .post('/users', { name: 'createUser' }, async (req, reply) => {
       const user = req.body.data;
-      if (!user.id) {
-        user.id = uniqid();
-      }
       try {
         const validUser = await app.objection.models.user.fromJson(user);
         await app.objection.models.user.query().insert(validUser);
@@ -40,6 +39,7 @@ export default (app) => {
         reply.redirect(app.reverse('root'));
       } catch (error) {
         if (error instanceof ValidationError) {
+          console.log(error);
           req.flash('error', i18next.t('flash.users.create.error'));
           reply.render('users/new', { user, errors: error.data });
           return reply.code(422);
@@ -52,19 +52,18 @@ export default (app) => {
       '/users/:id',
       {
         name: 'updateUser',
-        preValidation: app.auth([app.checkUserPermission, app.authenticate]),
+        // preValidation: app.auth([app.checkUserPermission, app.authenticate]),
       },
       async (req, reply) => {
         try {
           const {
             body: { data },
           } = req;
-          const patchData = _.omit(data, 'id');
           // console.log('1');
           const user = await app.objection.models.user.query().findById(req.params.id);
           // console.log('2', patchData);
           // console.log(await app.objection.models.user.query());
-          await user.$query().patch(patchData);
+          await user.$query().patch(data);
           // console.log('3');
           req.flash('success', i18next.t('flash.users.edit.success'));
           reply.redirect(app.reverse('users'));
@@ -79,6 +78,7 @@ export default (app) => {
               user,
               errors: error.data,
             });
+            console.log('Validation failed');
             return reply.code(422);
           }
           throw error;
@@ -92,19 +92,19 @@ export default (app) => {
         preValidation: app.auth([app.checkUserPermission, app.authenticate]),
       },
       async (req, reply) => {
-        // console.log('1');
+        console.log('1');
         const user = await app.objection.models.user.query().findById(req.params.id);
-        // console.log('2', user);
-        // const usersTasks = await user.$relatedQuery('tasks');
-        // console.log('3');
-        // if (usersTasks.length !== 0) {
-        //   req.flash('error', i18next.t('flash.users.delete.error'));
-        // } else {
-        await user.$query().delete();
-        req.logOut();
-        req.flash('info', i18next.t('flash.users.delete.success'));
-        // }
-        // console.log('4');
+        console.log('2', user);
+        const usersTasks = await user.$relatedQuery('tasks');
+        console.log('3');
+        if (usersTasks.length !== 0) {
+          req.flash('error', i18next.t('flash.users.delete.error'));
+        } else {
+          await user.$query().delete();
+          req.logOut();
+          req.flash('info', i18next.t('flash.users.delete.success'));
+        }
+        console.log('4');
         reply.redirect('/users');
         return reply;
       },

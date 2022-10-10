@@ -1,0 +1,37 @@
+extends ../layouts/application.pug
+
+block content
+    a.nav-link(href=route('taskNew'))= t('views.tasks.create')
+    .jumbotron.p-2
+        +formFor()(action=route('tasks') method='get' class="form-inline")
+            +filterSelect('task', 'status', statuses)
+            +filterSelect('task', 'executor', users)
+            +filterSelect('task', 'label', labels)
+            +checkbox('task','isCreatorUser')
+            +submit()(value=t('views.tasks.filter'))
+    table.table.table-striped
+        thead
+            tr
+                th= t('views.tasks.id')
+                th= t('views.tasks.name')
+                th= t('views.tasks.statusId')
+                th= t('views.tasks.creator')
+                th= t('views.tasks.responsibleId')
+                th= t('views.tasks.createdAt')
+                th= t('views.tasks.actions')
+        tbody
+          each task in tasks
+              tr
+                  td= task.id
+                  td
+                      a(href=route('taskShow', { id: task.id }))= task.name
+                  td= task.status.name
+                  td= `${task.creator.name}`
+                  if task.executor
+                      td= `${task.executor.name}`
+                  else
+                      td
+                  td= formatDate(task.createdAt)
+                  td
+                      a(href=route('taskEdit', { id: task.id }))= t('views.tasks.edit')
+                      +buttonTo(route('taskDelete', { id: task.id }), 'delete')(class="btn btn-link" value=t('views.tasks.delete'))

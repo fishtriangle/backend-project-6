@@ -22,15 +22,24 @@ describe('test users CRUD', () => {
     // console.log('3');
     models = app.objection.models;
     // console.log('4');
+    await knex.migrate.latest();
+    // console.log('3');
+    await prepareData(app);
+    // console.log('4');
+    testData = await getTestData(app, 'User');
+    // console.log('5');
+    cookie = await getCookie(app, testData.users.existing);
   });
 
   beforeEach(async () => {
     // console.log('2');
-    await knex.migrate.latest();
-    await prepareData(app);
-    testData = await getTestData(app);
+    // await knex.migrate.latest();
+    // console.log('3');
+    // await prepareData(app);
+    // console.log('4');
+    // testData = await getTestData(app);
     // console.log('5');
-    cookie = await getCookie(app, testData.users.existing);
+
     // console.log('COOKIES: ', cookie);
   });
 
@@ -57,13 +66,15 @@ describe('test users CRUD', () => {
     // console.log('1', existingUserFixtures.email)
     // console.log('2', await models.user.query())
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
-    // console.log('3', id)
+    // console.log('3', id);
+    console.log('3', cookie);
     const response = await app.inject({
       method: 'GET',
-      url: `/users/${id}/edit`,
-      // url: app.reverse('editUser', { id }),
+      // url: `/users/${id}/edit`,
+      url: app.reverse('editUser', { id }),
       cookies: cookie,
     });
+    // const response = '';
     // console.log('4')
     expect(response.statusCode).toBe(200);
   });
@@ -115,11 +126,71 @@ describe('test users CRUD', () => {
     expect(user).toMatchObject(expected);
   });
 
-  it('Patch user data', async () => {
+  it('User restricted from patch alien user data', async () => {
     const existingUserFixtures = testData.users.existing;
+    const otherUserFixtures = testData.users.other;
+    const user = await models.user.query().findOne({ email: otherUserFixtures.email });
+    const { id } = user;
+
+    const response = await app.inject({
+      method: 'PATCH',
+      url: app.reverse('updateUser', { id }),
+      cookies: cookie,
+      payload: {
+        data: existingUserFixtures,
+      },
+    });
+
+    expect(response.statusCode).toBe(422);
+
+    const notUpdatedUser = await models.user.query().findById(id);
+    const expected = {
+      ..._.omit(notUpdatedUser, 'password'),
+      passwordDigest: encrypt(otherUserFixtures.password),
+    };
+    expect(notUpdatedUser).toMatchObject(expected);
+  });
+
+  it('User restricted from delete alien user data', async () => {
+    const otherUserFixtures = testData.users.other;
+    const otherUser = await models.user.query().findOne({ email: otherUserFixtures.email });
+    const { id } = otherUser;
+
+    const response = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteUser', { id }),
+      cookies: cookie,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    const phoenixUser = await models.user.query().findById(id);
+    expect(otherUser).toMatchObject(phoenixUser);
+  });
+
+  it('Delete user', async () => {
+    const existingUserFixtures = testData.users.existing;
+    console.log(await models.user.query().findOne({ email: existingUserFixtures.email }));
+
+    const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
+    const response = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteUser', { id }),
+      cookies: cookie,
+    });
+
+    expect(response.statusCode).toBe(302);
+
+    const deletedUser = await models.user.query().findById(id);
+    expect(deletedUser).toEqual(undefined);
+  });
+
+  it('Patch user data', async () => {
+    cookie = await getCookie(app, testData.users.other);
+    const existingUserFixtures = testData.users.other;
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
     const updatedUserFixtures = testData.users.updated;
-    console.log('EXIST', id);
+    // console.log('EXIST', id);
     const response = await app.inject({
       method: 'PATCH',
       url: app.reverse('updateUser', { id }),
@@ -140,66 +211,8 @@ describe('test users CRUD', () => {
       ..._.omit(updatedUserFixtures, ['id', 'password']),
       passwordDigest: encrypt(updatedUserFixtures.password),
     };
-    console.log('EXPECT: ', expected);
+    // console.log('EXPECT: ', expected);
     expect(updatedUser).toMatchObject(expected);
-  });
-
-  it('User restricted from patch alien user data', async () => {
-    const existingUserFixtures = testData.users.existing;
-    const otherUserFixtures = testData.users.other;
-    const user = await models.user.query().findOne({ email: otherUserFixtures.email });
-    const { id } = user;
-
-    const response = await app.inject({
-      method: 'PATCH',
-      url: app.reverse('updateUser', { id }),
-      cookies: cookie,
-      payload: {
-        data: existingUserFixtures,
-      },
-    });
-
-    expect(response.statusCode).toBe(302);
-
-    const notUpdatedUser = await models.user.query().findById(id);
-    const expected = {
-      ..._.omit(notUpdatedUser, 'password'),
-      passwordDigest: encrypt(otherUserFixtures.password),
-    };
-    expect(notUpdatedUser).toMatchObject(expected);
-  });
-
-  it('Delete user', async () => {
-    const existingUserFixtures = testData.users.existing;
-    const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
-
-    const response = await app.inject({
-      method: 'DELETE',
-      url: app.reverse('deleteUser', { id }),
-      cookies: cookie,
-    });
-
-    expect(response.statusCode).toBe(302);
-
-    const deletedUser = await models.user.query().findById(id);
-    expect(deletedUser).toEqual(undefined);
-  });
-
-  it('User restricted from delete alien user data', async () => {
-    const otherUserFixtures = testData.users.other;
-    const otherUser = await models.user.query().findOne({ email: otherUserFixtures.email });
-    const { id } = otherUser;
-
-    const response = await app.inject({
-      method: 'DELETE',
-      url: app.reverse('deleteUser', { id }),
-      cookies: cookie,
-    });
-
-    expect(response.statusCode).toBe(302);
-
-    const phoenixUser = await models.user.query().findById(id);
-    expect(otherUser).toMatchObject(phoenixUser);
   });
 
   afterEach(async () => {

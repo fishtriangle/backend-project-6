@@ -16,7 +16,7 @@ describe('test session', () => {
     await knex.migrate.latest();
     await prepareData(app);
     testData = await getTestData(app);
-    console.log('TESTDATA: ', testData);
+    // console.log('TESTDATA: ', testData);
   });
 
   it('test sign in / sign out', async () => {
