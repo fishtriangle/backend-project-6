@@ -114,7 +114,6 @@ describe('test statuses CRUD', () => {
   it('Authorized user can edit status', async () => {
     const existingStatus = testData.statuses.existing;
 
-    // console.log('EXISITING: ', existingStatus);
     const updatedStatusFixture = testData.statuses.updated;
     updatedStatusFixture.name = `${updatedStatusFixture.name}New`;
     const { id } = await models.status.query().findOne({ name: existingStatus.name });
@@ -131,7 +130,7 @@ describe('test statuses CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     const updatedStatus = await models.status.query().findById(id);
-    // console.log('ID: ', id);
+
     updatedStatusFixture.id = id;
     expect(updatedStatus).toMatchObject(updatedStatusFixture);
 

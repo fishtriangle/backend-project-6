@@ -14,17 +14,17 @@ describe('test relations CRUD', () => {
 
   beforeAll(async () => {
     app = fastify({ logger: { prettyPrint: true } });
-    // console.log('1');
+
     await init(app);
-    // console.log('APP: ', app);
+
     knex = app.objection.knex;
-    // console.log('3');
+
     models = app.objection.models;
-    // console.log('4');
+
     await knex.migrate.latest();
     await prepareData(app);
     testData = await getTestData(app);
-    // console.log('5');
+
     cookie = await getCookie(app, testData.users.existing);
   });
 
@@ -32,7 +32,6 @@ describe('test relations CRUD', () => {
     // await knex.migrate.latest();
     // await prepareData(app);
     // testData = await getTestData(app);
-    // console.log('5');
     // cookie = await getCookie(app, testData.users.existing);
   });
 
@@ -120,7 +119,7 @@ describe('test relations CRUD', () => {
 
     const labelWithRemovedTaskRealation = await models.label.query()
       .findById(labelRemovedFromRelation.id);
-    // console.log('LABELS: ', await models.label.query());
+
     const [taskFromRemovedRelation] = await labelWithRemovedTaskRealation.$relatedQuery('tasks');
 
     expect(taskFromRemovedRelation).toBeUndefined();

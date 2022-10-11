@@ -22,11 +22,10 @@ export default (app) => {
       '/statuses/:id/edit',
       { name: 'editStatus', preValidation: app.authenticate },
       async (req, reply) => {
-        // console.log(req.params);
         const status = await app.objection.models.status.query().findById(req.params.id);
-        // console.log('status', status);
+
         reply.render('statuses/edit', { status });
-        // console.log('3');
+
         return reply;
       },
     )
@@ -57,17 +56,14 @@ export default (app) => {
       async (req, reply) => {
         try {
           const status = await app.objection.models.status.query().findById(req.params.id);
-          // console.log('ALL: ', await app.objection.models.status.query());
-          // console.log('OLDDATA: ', status);
-          // console.log('NEWDATA: ', req.body.data);
+
           await status.$query().patch(req.body.data);
-          // console.log('DATA UPDATED');
+
           req.flash('success', i18next.t('flash.statuses.edit.success'));
           reply.redirect(app.reverse('statuses'));
           return reply;
         } catch (error) {
           if (error instanceof ValidationError) {
-            // console.log('UPDATE ERROR: ', error);
             req.flash('error', i18next.t('flash.statuses.edit.error'));
             reply.render('statuses/edit', {
               status: { ...req.body.data, id: req.params.id },

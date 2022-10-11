@@ -16,7 +16,6 @@ describe('test session', () => {
     await knex.migrate.latest();
     await prepareData(app);
     testData = await getTestData(app);
-    // console.log('TESTDATA: ', testData);
   });
 
   it('test sign in / sign out', async () => {
@@ -26,7 +25,6 @@ describe('test session', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    // console.log('EXIST', testData.users.existing);
     const responseSignIn = await app.inject({
       method: 'POST',
       url: app.reverse('session'),

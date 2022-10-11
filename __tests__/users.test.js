@@ -15,32 +15,28 @@ describe('test users CRUD', () => {
 
   beforeAll(async () => {
     app = fastify({ logger: { prettyPrint: true } });
-    // console.log('1');
+
     await init(app);
-    // console.log('APP: ', app);
+
     knex = app.objection.knex;
-    // console.log('3');
+
     models = app.objection.models;
-    // console.log('4');
+
     await knex.migrate.latest();
-    // console.log('3');
+
     await prepareData(app);
-    // console.log('4');
+
     testData = await getTestData(app, 'User');
-    // console.log('5');
+
     cookie = await getCookie(app, testData.users.existing);
   });
 
   beforeEach(async () => {
-    // console.log('2');
     // await knex.migrate.latest();
-    // console.log('3');
-    // await prepareData(app);
-    // console.log('4');
-    // testData = await getTestData(app);
-    // console.log('5');
 
-    // console.log('COOKIES: ', cookie);
+    // await prepareData(app);
+
+    // testData = await getTestData(app);
   });
 
   it('Get /users page with code 200', async () => {
@@ -63,19 +59,15 @@ describe('test users CRUD', () => {
 
   it('Get user edit page with code 200', async () => {
     const existingUserFixtures = testData.users.existing;
-    // console.log('1', existingUserFixtures.email)
-    // console.log('2', await models.user.query())
+
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
-    // console.log('3', id);
-    // console.log('3', cookie);
+
     const response = await app.inject({
       method: 'GET',
       // url: `/users/${id}/edit`,
       url: app.reverse('editUser', { id }),
       cookies: cookie,
     });
-    // const response = '';
-    // console.log('4')
     expect(response.statusCode).toBe(200);
   });
 
@@ -105,9 +97,6 @@ describe('test users CRUD', () => {
   it('Create new user', async () => {
     const params = testData.users.new;
 
-    // console.log('NEW USER:', params);
-    // console.log(await models.user.query());
-
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('createUser'),
@@ -122,7 +111,6 @@ describe('test users CRUD', () => {
       passwordDigest: encrypt(params.password),
     };
     const user = await models.user.query().findOne({ email: params.email });
-    // console.log('SAVEDUSER ', await models.user.query());
     expect(user).toMatchObject(expected);
   });
 
@@ -170,7 +158,6 @@ describe('test users CRUD', () => {
 
   it('Delete user', async () => {
     const existingUserFixtures = testData.users.existing;
-    console.log(await models.user.query().findOne({ email: existingUserFixtures.email }));
 
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
     const response = await app.inject({
@@ -190,7 +177,7 @@ describe('test users CRUD', () => {
     const existingUserFixtures = testData.users.other;
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
     const updatedUserFixtures = testData.users.updated;
-    // console.log('EXIST', id);
+
     const response = await app.inject({
       method: 'PATCH',
       url: app.reverse('updateUser', { id }),
@@ -205,13 +192,12 @@ describe('test users CRUD', () => {
       await models.user.query().findById(id),
       ['email', 'passwordDigest'],
     );
-    // console.log('UPDATED id: ', id);
-    // console.log('UPDATED: ', await models.user.query().findById(id));
+
     const expected = {
       ..._.omit(updatedUserFixtures, ['id', 'password']),
       passwordDigest: encrypt(updatedUserFixtures.password),
     };
-    // console.log('EXPECT: ', expected);
+
     expect(updatedUser).toMatchObject(expected);
   });
 

@@ -46,27 +46,23 @@ describe('test statuses CRUD', () => {
 
   beforeAll(async () => {
     app = fastify({ logger: { prettyPrint: true } });
-    // console.log('1');
+
     await init(app);
-    // console.log('2');
+
     knex = app.objection.knex;
-    // console.log('3');
+
     models = app.objection.models;
-    // console.log('4');
+
     await knex.migrate.latest();
     await prepareData(app);
     testData = await getTestData(app);
     cookie = await getCookie(app, testData.users.existing);
-    // console.log('5');
-
-    // console.log('TEMPLATE1: ', templatesTestsData);
   });
 
   beforeEach(async () => {
     // await knex.migrate.latest();
     // await prepareData(app);
     // testData = await getTestData(app);
-    // console.log('TESTDATA: ', testData);
     // cookie = await getCookie(app, testData.users.existing);
   });
 
@@ -100,7 +96,6 @@ describe('test statuses CRUD', () => {
       email: testData.users.existing.email,
     });
     expectedTask.creatorId = currentUser.id;
-    // console.log('EXPECTED: ', expectedTask);
 
     const response = await app.inject({
       method: 'POST',
@@ -114,7 +109,7 @@ describe('test statuses CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     const newTask = await models.task.query().findOne({ name: expectedTask.name });
-    // console.log('NEW TASK: ', newTask);
+
     expect(newTask).toMatchObject(expectedTask);
   });
 
@@ -216,7 +211,7 @@ describe('test statuses CRUD', () => {
   it('User can delete task', async () => {
     const existingTask = testData.tasks.existing;
     const { id } = await models.task.query().findOne({ name: existingTask.name });
-    // console.log('ID: ', id);
+
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteTask', { id }),
@@ -224,7 +219,7 @@ describe('test statuses CRUD', () => {
     });
 
     expect(response.statusCode).toBe(302);
-    // console.log('TASKS: ', await models.task.query());
+
     const deletedTask = await models.task.query().findById(id);
     expect(deletedTask).toBeUndefined();
   });

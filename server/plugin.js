@@ -116,9 +116,8 @@ const registerPlugins = (app) => {
 
   fastifyPassport.registerUserDeserializer(
     (user) => {
-      // console.log('HERE?', user);
       const validUser = app.objection.models.user.query().findOne({ email: user.email });
-      // console.log('HERE?', validUser);
+
       return validUser;
     },
   );
@@ -142,10 +141,7 @@ const registerPlugins = (app) => {
     models,
   });
   app.decorate('checkUserPermission', async (request, reply) => {
-    // console.log('checkUserPermission');
-    // console.log(request.user.id, request.params.id);
     if (request.user?.id !== parseInt(request.params.id, 10)) {
-      // console.log('error checkUserPermission');
       request.flash('error', i18next.t('flash.users.authError'));
       reply.redirect('/users');
     }
@@ -162,22 +158,21 @@ const registerPlugins = (app) => {
 
 // eslint-disable-next-line no-unused-vars
 export default async (app, options) => {
-  // console.log('11');
   registerPlugins(app);
-  // console.log('12');
+
   addErrorHandlers(app);
   await setupLocalization();
-  // console.log('13');
+
   setUpViews(app);
-  // console.log('14');
+
   setUpStaticAssets(app);
-  // console.log('15');
+
   app.after(() => {
     addRoutes(app);
   });
-  // console.log('16');
+
   addHooks(app);
-  // console.log('17');
+
   return app;
 };
 

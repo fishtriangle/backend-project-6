@@ -128,21 +128,21 @@ export const getTestData = async (app, testModel) => {
       (email === fixtures.users.existing.email) || (email === fixtures.users.other.email)
     ))
     .map(({ id, email, password }) => ({ id, email, passwordDigest: encrypt(password) }));
-  // console.log('HELPERS', usersList);
+
   await knex('users').insert(usersList);
 
   const statusList = Object.values(fixtures.statuses)
     .filter(({ name }) => (
       (name === fixtures.statuses.existing.name) || (name === fixtures.statuses.relatedNew.name)
     ));
-  // console.log('StatusList: ', statusList);
+
   await knex('statuses').insert(statusList);
 
   const tasksList = Object.values(fixtures.tasks)
     .filter(({ name }) => (
       (name === fixtures.tasks.existing.name) || (name === fixtures.tasks.another.name)
     ));
-  // console.log('Tasks: ', tasksList);
+
   if (testModel !== 'User') {
     await knex('tasks').insert(tasksList);
   }
@@ -187,15 +187,14 @@ export const prepareData = async (app) => {
   });
 
   await knex('users').insert(usersList);
-  // console.log('3-2', statusesList);
+
   await knex('statuses').insert(statusesList);
-  // console.log('3-3', tasksList);
+
   await knex('tasks').insert(tasksList);
-  // console.log('3-4', labelsList);
+
   await knex('labels').insert(labelsList);
-  // console.log('3-5');
+
   await knex('tasks_labels').insert(tasksLabelsList);
-  // console.log('3-6');
 };
 
 export const getCookie = async (app, data) => {
