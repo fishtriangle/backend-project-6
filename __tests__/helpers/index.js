@@ -5,20 +5,20 @@ import encrypt from '../../server/lib/secure.cjs';
 
 function createRandomUser() {
   return {
-    email: faker.internet.email(),
+    email: faker.helpers.unique(faker.internet.email),
     password: faker.internet.password(15, false, /[a-zA-Z]|\d/),
   };
 }
 
 function createRandomStatus() {
   return {
-    name: faker.hacker.ingverb(),
+    name: faker.helpers.unique(faker.hacker.ingverb),
   };
 }
 
 function createRandomTask(statusId, creatorId, responsibleId) {
   return {
-    name: faker.word.interjection(),
+    name: faker.helpers.unique(faker.word.interjection),
     description: faker.lorem.paragraph(),
     statusId,
     creatorId,
@@ -28,7 +28,7 @@ function createRandomTask(statusId, creatorId, responsibleId) {
 
 function createRandomLabel() {
   return {
-    name: faker.hacker.abbreviation(),
+    name: faker.helpers.unique(faker.hacker.abbreviation),
   };
 }
 
