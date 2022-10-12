@@ -34,5 +34,3 @@ jobs:
         with:
           coverageCommand: npm test
           debug: true
-
-      - run: make test
