@@ -68,7 +68,7 @@ export default (app) => {
       const task = req.body.data;
 
       const {
-        name, description, statusId, responsibleId, labels,
+        name, description, statusId, executorId, labels,
       } = task;
 
       const labelIds = [labels].flat().map((id) => ({ id: parseInt(id, 10) }));
@@ -77,9 +77,9 @@ export default (app) => {
         const validTask = await app.objection.models.task.fromJson({
           name,
           description,
-          responsibleId: parseInt(responsibleId, 10),
+          executorId: parseInt(executorId, 10),
           creatorId: req.user.id,
-          ...(responsibleId && { responsibleId: parseInt(responsibleId, 10) }),
+          ...(executorId && { executorId: parseInt(executorId, 10) }),
           ...(statusId && { statusId: parseInt(statusId, 10) }),
         });
 
@@ -157,7 +157,7 @@ export default (app) => {
         const {
           body: {
             data: {
-              name, description, statusId, responsibleId, labels = [],
+              name, description, statusId, executorId, labels = [],
             },
           },
         } = req;
@@ -171,7 +171,7 @@ export default (app) => {
                 description,
                 labels: labelIds,
                 id: parseInt(req.params.id, 10),
-                ...(responsibleId && { responsibleId: parseInt(responsibleId, 10) }),
+                ...(executorId && { executorId: parseInt(executorId, 10) }),
                 ...(statusId && { statusId: parseInt(statusId, 10) }),
               },
               {

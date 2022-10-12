@@ -34,7 +34,7 @@ export default class Task extends BaseModel {
         description: { type: 'string' },
         creatorId: { type: 'integer' },
         statusId: { type: 'integer' },
-        responsibleId: { type: 'integer' },
+        executorId: { type: 'integer' },
       },
     };
   }
@@ -53,7 +53,7 @@ export default class Task extends BaseModel {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: User,
         join: {
-          from: 'tasks.responsibleId',
+          from: 'tasks.executorId',
           to: 'users.id',
         },
       },
@@ -86,7 +86,7 @@ export default class Task extends BaseModel {
     },
 
     filterExecutor(query, id) {
-      query.where('responsibleId', id);
+      query.where('executorId', id);
     },
 
     filterStatus(query, id) {

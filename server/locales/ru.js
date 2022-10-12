@@ -152,7 +152,7 @@ export default {
       tasks: {
         id: 'ID',
         creator: 'Автор',
-        responsibleId: 'Исполнитель',
+        executorId: 'Исполнитель',
         name: 'Наименование',
         statusId: 'Статус',
         edit: 'Изменить',

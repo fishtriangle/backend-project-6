@@ -122,13 +122,13 @@ describe('test statuses CRUD', () => {
       expectedData: (data) => data.tasks.updatedName,
     },
     {
-      testName: 'Update responsible user',
+      testName: 'Update executor',
       testData: (data) => data.tasks.existing,
-      updatedTestData: (data) => data.tasks.updatedResponsible,
+      updatedTestData: (data) => data.tasks.updatedExecutor,
       getPayloadData: (data, fixture) => ({
-        ...fixture.tasks.existing, responsibleId: data.responsibleId,
+        ...fixture.tasks.existing, executorId: data.executorId,
       }),
-      expectedData: (data) => data.tasks.updatedResponsible,
+      expectedData: (data) => data.tasks.updatedExecutor,
     },
     {
       testName: 'Update status',

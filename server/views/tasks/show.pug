@@ -15,7 +15,7 @@ block content
                 .col= t('views.tasks.creator')
                 .col= `${task.creator.name}`
             .row.p-1
-                .col= t('views.tasks.responsibleId')
+                .col= t('views.tasks.executorId')
                 if task.executor
                     .col= `${task.executor.name}`
                 else

@@ -16,13 +16,13 @@ function createRandomStatus() {
   };
 }
 
-function createRandomTask(statusId, creatorId, responsibleId) {
+function createRandomTask(statusId, creatorId, executorId) {
   return {
     name: faker.helpers.unique(faker.word.interjection),
     description: faker.lorem.paragraph(),
     statusId,
     creatorId,
-    responsibleId,
+    executorId,
   };
 }
 
@@ -82,9 +82,9 @@ export const getTestData = async (app, testModel) => {
       ...tasks.existing,
       name: faker.word.adjective(),
     },
-    updatedResponsible: {
+    updatedExecutor: {
       ...tasks.existing,
-      responsibleId: 2,
+      executorId: 2,
     },
     updatedStatus: {
       ...tasks.existing,
