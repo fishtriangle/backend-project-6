@@ -5,8 +5,8 @@ block header
 
 
 block content
-    +formFor()(action=('/statuses/' + status.id) method='post')
-        +input('status', 'name', errors)(type="text")
+    +formFor()(action=route('updateStatus', { id: status.id }) method='post')
+        +input(status, 'name', errors)(type="text")
         input(name='_method' type='hidden' value='patch')
         +submit('status')(class="btn btn-outline-light me-4" value=t('views.statuses.edit'))
         a.btn.btn-warning.mt-4.px-5(href=route('statuses'))= t('views.statuses.cancel')
