@@ -9,7 +9,8 @@ export default (app) => {
     })
     .post('/session', { name: 'session' }, app.fp.authenticate('form', async (req, reply, err) => {
       if (err) {
-        return app.httpErrors.internalServerError(err);
+        reply.code(422);
+        return reply.render('session/new');
       }
       const user = req.body?.data;
       if (!user) {
