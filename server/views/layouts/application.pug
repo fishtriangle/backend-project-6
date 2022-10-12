@@ -16,12 +16,16 @@ html(lang="en")
             li
               a.nav-link.px-2.text-secondary(href=route('users'))= t('layouts.application.users')
           .text-end.d-flex
-            if isAuthenticated()
-              .flex.flex-row.justify-content-between
-                a.btn.btn-outline-light.me-2(href=route('statuses'))= t('layouts.application.statuses')
-                a.btn.btn-outline-light.me-2(href=route('tasks'))= t('layouts.application.tasks')
-                a.btn.btn-outline-light.me-2(href=route('labels'))= t('layouts.application.labels')
-                +buttonTo(route('session'), 'delete')(class="btn btn-warning" value=t('layouts.application.signOut'))
+            if isAuthenticated
+              if isAuthenticated()
+                .flex.flex-row.justify-content-between
+                  a.btn.btn-outline-light.me-2(href=route('statuses'))= t('layouts.application.statuses')
+                  a.btn.btn-outline-light.me-2(href=route('tasks'))= t('layouts.application.tasks')
+                  a.btn.btn-outline-light.me-2(href=route('labels'))= t('layouts.application.labels')
+                  +buttonTo(route('session'), 'delete')(class="btn btn-warning" value=t('layouts.application.signOut'))
+              else
+                a.btn.btn-outline-light.me-2(href=route('newSession'))= t('layouts.application.signIn')
+                a.btn.btn-warning(href=route('newUser'))= t('layouts.application.signUp')
             else
               a.btn.btn-outline-light.me-2(href=route('newSession'))= t('layouts.application.signIn')
               a.btn.btn-warning(href=route('newUser'))= t('layouts.application.signUp')

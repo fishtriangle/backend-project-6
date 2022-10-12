@@ -22,7 +22,6 @@ export default (app) => {
       },
       async (req, reply) => {
         const user = await app.objection.models.user.query().findById(req.params.id);
-
         reply.render('users/edit', { user });
         return reply;
       },

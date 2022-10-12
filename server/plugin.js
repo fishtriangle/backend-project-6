@@ -140,11 +140,11 @@ const registerPlugins = (app) => {
     knexConfig: knexConfig[mode],
     models,
   });
-  // eslint-disable-next-line consistent-return
   app.decorate('checkUserPermission', async (request, reply) => {
     if (request.user?.id !== parseInt(request.params.id, 10)) {
       request.flash('error', i18next.t('flash.users.authError'));
-      reply.render('/users');
+      const users = await app.objection.models.user.query();
+      reply.render('users/index', { users });
       return reply.code(422);
     }
   });
@@ -168,13 +168,10 @@ export default async (app, options) => {
   setUpViews(app);
 
   setUpStaticAssets(app);
-
+  addHooks(app);
   app.after(() => {
     addRoutes(app);
   });
-
-  addHooks(app);
-
   return app;
 };
 
