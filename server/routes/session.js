@@ -1,6 +1,5 @@
 // @ts-check
 import i18next from 'i18next';
-import {ValidationError} from "objection";
 
 export default (app) => {
   app
