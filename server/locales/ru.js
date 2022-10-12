@@ -165,6 +165,7 @@ export default {
         delete: 'Удалить',
         create: 'Создать задачу',
         titleItem: 'Задача',
+        createTitle: 'Создание задачи',
         editTitle: 'Изменение задачи',
         actions: '',
         status: 'Статус',

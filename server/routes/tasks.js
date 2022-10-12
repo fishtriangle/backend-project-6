@@ -65,16 +65,16 @@ export default (app) => {
       });
     })
     .post('/tasks', { name: 'createTask', preValidation: app.authenticate }, async (req, reply) => {
-      const task = req.body.data;
+      const { data } = req.body;
 
       const {
         name, description, statusId, executorId, labels,
-      } = task;
+      } = data;
 
       const labelIds = [labels].flat().map((id) => ({ id: parseInt(id, 10) }));
 
       try {
-        const validTask = await app.objection.models.task.fromJson({
+        const task = await app.objection.models.task.fromJson({
           name,
           description,
           executorId: parseInt(executorId, 10),
@@ -85,7 +85,7 @@ export default (app) => {
 
         await app.objection.models.task.transaction(async (trx) => {
           await app.objection.models.task.query(trx)
-            .insertGraph([{ ...validTask, labels: labelIds }], {
+            .insertGraph([{ ...task, labels: labelIds }], {
               relate: ['labels'],
             });
         });
@@ -95,15 +95,23 @@ export default (app) => {
         return reply;
       } catch (error) {
         if (error instanceof ValidationError) {
+          console.log('1');
           req.flash('error', i18next.t('flash.tasks.create.error'));
-          const validTask = new app.objection.models.task().$set(req.body.data);
+          const task = new app.objection.models.task().$set(req.body.data);
           const [users, statuses, labelList] = await Promise.all([
             app.objection.models.user.query(),
             app.objection.models.status.query(),
             app.objection.models.label.query(),
           ]);
+          console.log(
+            task,
+            users,
+            statuses,
+            labelList,
+            error.data,
+          );
           reply.render('/tasks/new', {
-            validTask,
+            task,
             users,
             statuses,
             labels: labelList,
