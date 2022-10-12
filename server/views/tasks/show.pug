@@ -28,11 +28,11 @@ block content
                 .col= formatDate(task.createdAt)
             .row.p-1
                 .col
-                    h6= t('views.tasks.labels')
+                    h6.mb-0= t('views.tasks.labels')
                     ul
                       if task.labels
                           each label in task.labels
-                              li= label.name
+                              li.list-unstyled.ps-2.small= label.name
             .row.p-1
                 .col
                     a.btn.btn-dark.text-white.px-5.me-3(href=route('editTask', { id: task.id }))= t('views.tasks.edit')

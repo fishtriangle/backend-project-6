@@ -121,7 +121,7 @@ export default (app) => {
         const task = await app.objection.models.task
           .query()
           .findById(req.params.id)
-          .withGraphJoined('[creator, executor, status]');
+          .withGraphJoined('[creator, executor, status, labels]');
         if (!task) {
           req.flash('error', i18next.t('flash.tasks.showError'));
           reply.redirect(app.reverse('tasks'));
