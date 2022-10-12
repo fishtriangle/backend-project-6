@@ -26,7 +26,7 @@ export default class Task extends BaseModel {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['name', 'creatorId', 'statusId'],
+      required: ['name', 'creatorId'],
 
       properties: {
         id: { type: 'integer' },
