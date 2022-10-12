@@ -34,9 +34,6 @@ describe('test session', () => {
     });
 
     expect(responseSignIn.statusCode).toBe(302);
-    // после успешной аутентификации получаем куки из ответа,
-    // они понадобятся для выполнения запросов на маршруты требующие
-    // предварительную аутентификацию
     const [sessionCookie] = responseSignIn.cookies;
     const { name, value } = sessionCookie;
     const cookie = { [name]: value };
@@ -49,6 +46,18 @@ describe('test session', () => {
     });
 
     expect(responseSignOut.statusCode).toBe(302);
+  });
+
+  it('test create without data', async () => {
+    const responseCreate = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: testData.users.empty,
+      },
+    });
+
+    expect(responseCreate.statusCode).toBe(422);
   });
 
   afterAll(async () => {

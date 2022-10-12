@@ -140,10 +140,12 @@ const registerPlugins = (app) => {
     knexConfig: knexConfig[mode],
     models,
   });
+  // eslint-disable-next-line consistent-return
   app.decorate('checkUserPermission', async (request, reply) => {
     if (request.user?.id !== parseInt(request.params.id, 10)) {
       request.flash('error', i18next.t('flash.users.authError'));
-      reply.redirect('/users');
+      reply.render('/users');
+      return reply.code(422);
     }
   });
 

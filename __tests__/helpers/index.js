@@ -37,6 +37,10 @@ export const getTestData = async (app, testModel) => {
   const users = {
     new: createRandomUser(),
     existing: createRandomUser(),
+    empty: {
+      email: '',
+      password: '',
+    },
     updated: createRandomUser(),
     other: createRandomUser(),
     relatedNewExecutor: {

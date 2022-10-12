@@ -87,7 +87,7 @@ describe('test users CRUD', () => {
         data: existingUserFixtures,
       },
     });
-    expect(response.statusCode).toBe(302);
+    expect(response.statusCode).toBe(422);
 
     const notUpdatedUser = await models.user.query().findById(id);
 
@@ -150,7 +150,7 @@ describe('test users CRUD', () => {
       cookies: cookie,
     });
 
-    expect(response.statusCode).toBe(302);
+    expect(response.statusCode).toBe(422);
 
     const phoenixUser = await models.user.query().findById(id);
     expect(otherUser).toMatchObject(phoenixUser);

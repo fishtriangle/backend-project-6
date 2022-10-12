@@ -48,7 +48,7 @@ export default (app) => {
       '/users/:id',
       {
         name: 'updateUser',
-        // preValidation: app.auth([app.checkUserPermission, app.authenticate]),
+        preValidation: app.auth([app.checkUserPermission, app.authenticate]),
       },
       async (req, reply) => {
         try {
