@@ -85,13 +85,16 @@ export default (app) => {
       },
       async (req, reply) => {
         const user = await app.objection.models.user.query().findById(req.params.id);
-
+        console.log('3', user);
         const usersTasks = await user.$relatedQuery('tasks');
-
+        console.log('3.1 ', usersTasks);
         if (usersTasks.length !== 0) {
           req.flash('error', i18next.t('flash.users.delete.error'));
         } else {
-          await user.$query().delete();
+          const deleted = await app.objection.models.user.query()
+            .deleteById(req.params.id);
+          // await user.$query().delete();
+          console.log('3.5 ', deleted);
           req.logOut();
           req.flash('info', i18next.t('flash.users.delete.success'));
         }

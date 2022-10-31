@@ -14,25 +14,16 @@ describe('test relations CRUD', () => {
 
   beforeAll(async () => {
     app = fastify({ logger: { prettyPrint: true } });
-
     await init(app);
-
     knex = app.objection.knex;
-
     models = app.objection.models;
-
-    await knex.migrate.latest();
-    await prepareData(app);
-    testData = await getTestData(app);
-
-    cookie = await getCookie(app, testData.users.existing);
   });
 
   beforeEach(async () => {
-    // await knex.migrate.latest();
-    // await prepareData(app);
-    // testData = await getTestData(app);
-    // cookie = await getCookie(app, testData.users.existing);
+    await knex.migrate.latest();
+    await prepareData(app);
+    testData = await getTestData(app);
+    cookie = await getCookie(app, testData.users.existing);
   });
 
   it('Create task with labelId should create only task-label relation', async () => {
@@ -135,7 +126,11 @@ describe('test relations CRUD', () => {
   });
 
   afterEach(async () => {
-    // await knex.migrate.rollback();
+    await knex('users').truncate();
+    await knex('statuses').truncate();
+    await knex('tasks').truncate();
+    await knex('labels').truncate();
+    await knex('tasks_labels').truncate();
   });
 
   afterAll(() => {

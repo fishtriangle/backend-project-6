@@ -1,21 +1,16 @@
 // @ts-check
 
-import _ from 'lodash';
-import BaseModel from './BaseModel.cjs';
-// eslint-disable-next-line import/no-cycle
-import User from './User.js';
-// eslint-disable-next-line import/no-cycle
-import Status from './Status.js';
-// eslint-disable-next-line import/no-cycle
-import Label from './Label.js';
+const BaseModel = require('./BaseModel.cjs');
 
-export default class Task extends BaseModel {
+module.exports = class Task extends BaseModel {
   $parseJson(json, options) {
     const parsed = super.$parseJson(json, options);
     return {
       ...parsed,
-      ...(parsed.name && { name: _.trim(parsed.name) }),
-      ...(parsed.description && { description: _.trim(parsed.description) }),
+      name: parsed.name?.trim(),
+      description: parsed.description?.trim(),
+      executorId: Number(parsed.executorId),
+      statusId: Number(parsed.statusId),
     };
   }
 
@@ -43,7 +38,7 @@ export default class Task extends BaseModel {
     return {
       creator: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: User,
+        modelClass: 'User',
         join: {
           from: 'tasks.creatorId',
           to: 'users.id',
@@ -51,7 +46,7 @@ export default class Task extends BaseModel {
       },
       executor: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: User,
+        modelClass: 'User',
         join: {
           from: 'tasks.executorId',
           to: 'users.id',
@@ -59,7 +54,7 @@ export default class Task extends BaseModel {
       },
       status: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: Status,
+        modelClass: 'Status',
         join: {
           from: 'tasks.statusId',
           to: 'statuses.id',
@@ -67,7 +62,7 @@ export default class Task extends BaseModel {
       },
       labels: {
         relation: BaseModel.ManyToManyRelation,
-        modelClass: Label,
+        modelClass: 'Label',
         join: {
           from: 'tasks.id',
           through: {

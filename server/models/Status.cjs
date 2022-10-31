@@ -1,18 +1,15 @@
 // @ts-check
 
-import objectionUnique from 'objection-unique';
-import _ from 'lodash';
-import BaseModel from './BaseModel.cjs';
-// eslint-disable-next-line import/no-cycle
-import Task from './Task.js';
+const objectionUnique = require('objection-unique');
+const BaseModel = require('./BaseModel.cjs');
 
 const unique = objectionUnique({ fields: ['name'] });
-export default class Status extends unique(BaseModel) {
+module.exports = class Status extends unique(BaseModel) {
   $parseJson(json, options) {
     const parsed = super.$parseJson(json, options);
     return {
       ...parsed,
-      ...(parsed.name && { name: _.trim(parsed.name) }),
+      name: parsed.name?.trim(),
     };
   }
 
@@ -36,7 +33,7 @@ export default class Status extends unique(BaseModel) {
     return {
       tasks: {
         relation: BaseModel.HasManyRelation,
-        modelClass: Task,
+        modelClass: 'Task',
         join: {
           from: 'statuses.id',
           to: 'tasks.statusId',

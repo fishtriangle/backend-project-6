@@ -13,6 +13,9 @@ describe('test session', () => {
     app = fastify({ logger: { prettyPrint: true } });
     await init(app);
     knex = app.objection.knex;
+  });
+
+  beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
     testData = await getTestData(app);
@@ -41,7 +44,6 @@ describe('test session', () => {
     const responseSignOut = await app.inject({
       method: 'DELETE',
       url: app.reverse('session'),
-      // используем полученные ранее куки
       cookies: cookie,
     });
 
@@ -60,8 +62,15 @@ describe('test session', () => {
     expect(responseCreate.statusCode).toBe(422);
   });
 
+  afterEach(async () => {
+    await knex('users').truncate();
+    await knex('statuses').truncate();
+    await knex('tasks').truncate();
+    await knex('labels').truncate();
+    await knex('tasks_labels').truncate();
+  });
+
   afterAll(async () => {
-    // await knex.migrate.rollback();
     await app.close();
   });
 });

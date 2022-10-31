@@ -15,21 +15,10 @@ export default (app) => {
         .query()
         .withGraphJoined('[creator, executor, status, labels]');
 
-      if (query.executor) {
-        tasksQuery.modify('filterExecutor', query.executor);
-      }
-
-      if (query.status) {
-        tasksQuery.modify('filterStatus', query.status);
-      }
-
-      if (query.label) {
-        tasksQuery.modify('filterLabel', query.label);
-      }
-
-      if (query.isCreatorUser) {
-        tasksQuery.modify('filterCreator', id);
-      }
+      tasksQuery.skipUndefined().modify('filterExecutor', query.executor || undefined);
+      tasksQuery.skipUndefined().modify('filterStatus', query.status || undefined);
+      tasksQuery.skipUndefined().modify('filterLabel', query.label || undefined);
+      tasksQuery.skipUndefined().modify('filterCreator', id || undefined);
 
       const [tasks, users, statuses, labels] = await Promise.all([
         tasksQuery,
@@ -71,16 +60,17 @@ export default (app) => {
         name, description, statusId, executorId, labels,
       } = data;
 
-      const labelIds = [labels].flat().map((id) => ({ id: parseInt(id, 10) }));
+      const labelIds = (Array.isArray(labels)
+        ? labels
+        : [labels]).map((id) => ({ id: parseInt(id, 10) }));
 
       try {
         const task = await app.objection.models.task.fromJson({
           name,
           description,
-          executorId: parseInt(executorId, 10),
+          executorId,
+          statusId,
           creatorId: req.user.id,
-          ...(executorId && { executorId: parseInt(executorId, 10) }),
-          ...(statusId && { statusId: parseInt(statusId, 10) }),
         });
 
         await app.objection.models.task.transaction(async (trx) => {

@@ -12,13 +12,13 @@ function createRandomUser() {
 
 function createRandomStatus() {
   return {
-    name: faker.helpers.unique(faker.hacker.ingverb),
+    name: `${faker.hacker.ingverb()}-${faker.helpers.unique(faker.datatype.number)}`,
   };
 }
 
 function createRandomTask(statusId, creatorId, executorId) {
   return {
-    name: faker.helpers.unique(faker.word.interjection),
+    name: `${faker.word.interjection()}-${faker.helpers.unique(faker.datatype.number)}`,
     description: faker.lorem.paragraph(),
     statusId,
     creatorId,
@@ -28,7 +28,7 @@ function createRandomTask(statusId, creatorId, executorId) {
 
 function createRandomLabel() {
   return {
-    name: faker.helpers.unique(faker.hacker.abbreviation),
+    name: `${faker.hacker.abbreviation()}-${faker.helpers.unique(faker.datatype.number)}`,
   };
 }
 
@@ -51,6 +51,7 @@ export const getTestData = async (app, testModel) => {
       ...createRandomUser(),
       id: 4,
     },
+    existingWithoutTasks: createRandomUser(),
   };
 
   const statuses = {
@@ -129,7 +130,9 @@ export const getTestData = async (app, testModel) => {
 
   const usersList = Object.values(fixtures.users)
     .filter(({ email }) => (
-      (email === fixtures.users.existing.email) || (email === fixtures.users.other.email)
+      (email === fixtures.users.existing.email)
+      || (email === fixtures.users.other.email)
+      || (email === fixtures.users.existingWithoutTasks.email)
     ))
     .map(({ id, email, password }) => ({ id, email, passwordDigest: encrypt(password) }));
 

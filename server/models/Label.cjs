@@ -1,16 +1,13 @@
 // @ts-check
 
-import _ from 'lodash';
-import BaseModel from './BaseModel.cjs';
-// eslint-disable-next-line import/no-cycle
-import Task from './Task.js';
+const BaseModel = require('./BaseModel.cjs');
 
-export default class Label extends BaseModel {
+module.exports = class Label extends BaseModel {
   $parseJson(json, options) {
     const parsed = super.$parseJson(json, options);
     return {
       ...parsed,
-      ...(parsed.name && { name: _.trim(parsed.name) }),
+      name: parsed.name?.trim(),
     };
   }
 
@@ -34,7 +31,7 @@ export default class Label extends BaseModel {
     return {
       tasks: {
         relation: BaseModel.ManyToManyRelation,
-        modelClass: Task,
+        modelClass: 'Task',
         join: {
           from: 'labels.id',
           through: {

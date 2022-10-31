@@ -1,22 +1,23 @@
 // @ts-check
-import _ from 'lodash';
-import objectionUnique from 'objection-unique';
-import BaseModel from './BaseModel.cjs';
-import encrypt from '../lib/secure.cjs';
-// eslint-disable-next-line import/no-cycle
-import Task from './Task.js';
+// import objectionUnique from 'objection-unique';
+// import BaseModel from './BaseModel.cjs';
+// import encrypt from '../lib/secure.cjs';
+
+const objectionUnique = require('objection-unique');
+const BaseModel = require('./BaseModel.cjs');
+const encrypt = require('../lib/secure.cjs');
 
 const unique = objectionUnique({ fields: ['email'] });
 
-export default class User extends unique(BaseModel) {
+module.exports = class User extends unique(BaseModel) {
   $parseJson(json, options) {
     const parsed = super.$parseJson(json, options);
     return {
       ...parsed,
-      ...(parsed.firstName && { name: _.trim(parsed.firstName) }),
-      ...(parsed.lastName && { name: _.trim(parsed.lastName) }),
-      ...(parsed.email && { name: _.trim(parsed.email) }),
-      ...(parsed.password && { name: _.trim(parsed.password) }),
+      firstName: parsed.firstName?.trim(),
+      lastName: parsed.lastName?.trim(),
+      email: parsed.email?.trim(),
+      password: parsed.password?.trim(),
     };
   }
 
@@ -42,7 +43,7 @@ export default class User extends unique(BaseModel) {
     return {
       tasks: {
         relation: BaseModel.HasManyRelation,
-        modelClass: Task,
+        modelClass: 'Task',
         join: {
           from: 'users.id',
           to: 'tasks.creatorId',

@@ -15,28 +15,16 @@ describe('test users CRUD', () => {
 
   beforeAll(async () => {
     app = fastify({ logger: { prettyPrint: true } });
-
     await init(app);
-
     knex = app.objection.knex;
-
     models = app.objection.models;
-
-    await knex.migrate.latest();
-
-    await prepareData(app);
-
-    testData = await getTestData(app, 'User');
-
-    cookie = await getCookie(app, testData.users.existing);
   });
 
   beforeEach(async () => {
-    // await knex.migrate.latest();
-
-    // await prepareData(app);
-
-    // testData = await getTestData(app);
+    await knex.migrate.latest();
+    await prepareData(app);
+    testData = await getTestData(app);
+    cookie = await getCookie(app, testData.users.existing);
   });
 
   it('Get /users page with code 200', async () => {
@@ -157,9 +145,13 @@ describe('test users CRUD', () => {
   });
 
   it('Delete user', async () => {
-    const existingUserFixtures = testData.users.existing;
+    cookie = await getCookie(app, testData.users.existingWithoutTasks);
+    const existingUserFixtures = testData.users.existingWithoutTasks;
+
+    console.log('1', existingUserFixtures);
 
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
+    console.log('2', id);
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteUser', { id }),
@@ -169,6 +161,7 @@ describe('test users CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     const deletedUser = await models.user.query().findById(id);
+    console.log('4', deletedUser);
     expect(deletedUser).toEqual(undefined);
   });
 
@@ -202,7 +195,11 @@ describe('test users CRUD', () => {
   });
 
   afterEach(async () => {
-    // await knex.migrate.rollback();
+    await knex('users').truncate();
+    await knex('statuses').truncate();
+    await knex('tasks').truncate();
+    await knex('labels').truncate();
+    await knex('tasks_labels').truncate();
   });
 
   afterAll(async () => {
