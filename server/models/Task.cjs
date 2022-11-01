@@ -21,15 +21,15 @@ module.exports = class Task extends BaseModel {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['name', 'creatorId'],
+      required: ['name', 'creatorId', 'executorId'],
 
       properties: {
         id: { type: 'integer' },
         name: { type: 'string', minLength: 1 },
         description: { type: 'string' },
-        creatorId: { type: 'integer' },
+        creatorId: { type: 'integer', minimum: 1 },
         statusId: { type: 'integer' },
-        executorId: { type: 'integer' },
+        executorId: { type: 'integer', minimum: 1 },
       },
     };
   }
