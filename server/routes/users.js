@@ -84,21 +84,23 @@ export default (app) => {
         preValidation: app.auth([app.checkUserPermission, app.authenticate]),
       },
       async (req, reply) => {
+        console.log('1');
         const user = await app.objection.models.user.query().findById(req.params.id);
-        console.log('3', user);
+        console.log('2');
         const usersTasks = await user.$relatedQuery('tasks');
-        console.log('3.1 ', usersTasks);
+        console.log('2.5');
         if (usersTasks.length !== 0) {
+          console.log('3');
           req.flash('error', i18next.t('flash.users.delete.error'));
         } else {
-          const deleted = await app.objection.models.user.query()
-            .deleteById(req.params.id);
-          // await user.$query().delete();
-          console.log('3.5 ', deleted);
+          console.log('4');
+          // const deleted = await app.objection.models.user.query()
+          //   .deleteById(req.params.id);
+          await user.$query().delete();
           req.logOut();
           req.flash('info', i18next.t('flash.users.delete.success'));
         }
-
+        console.log('6');
         reply.redirect('/users');
         return reply;
       },

@@ -38,7 +38,7 @@ module.exports = class Task extends BaseModel {
     return {
       creator: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: 'User',
+        modelClass: 'User.cjs',
         join: {
           from: 'tasks.creatorId',
           to: 'users.id',
@@ -46,7 +46,7 @@ module.exports = class Task extends BaseModel {
       },
       executor: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: 'User',
+        modelClass: 'User.cjs',
         join: {
           from: 'tasks.executorId',
           to: 'users.id',
@@ -54,7 +54,7 @@ module.exports = class Task extends BaseModel {
       },
       status: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: 'Status',
+        modelClass: 'Status.cjs',
         join: {
           from: 'tasks.statusId',
           to: 'statuses.id',
@@ -62,7 +62,7 @@ module.exports = class Task extends BaseModel {
       },
       labels: {
         relation: BaseModel.ManyToManyRelation,
-        modelClass: 'Label',
+        modelClass: 'Label.cjs',
         join: {
           from: 'tasks.id',
           through: {

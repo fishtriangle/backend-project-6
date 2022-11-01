@@ -147,11 +147,7 @@ describe('test users CRUD', () => {
   it('Delete user', async () => {
     cookie = await getCookie(app, testData.users.existingWithoutTasks);
     const existingUserFixtures = testData.users.existingWithoutTasks;
-
-    console.log('1', existingUserFixtures);
-
     const { id } = await models.user.query().findOne({ email: existingUserFixtures.email });
-    console.log('2', id);
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteUser', { id }),
@@ -161,7 +157,6 @@ describe('test users CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     const deletedUser = await models.user.query().findById(id);
-    console.log('4', deletedUser);
     expect(deletedUser).toEqual(undefined);
   });
 

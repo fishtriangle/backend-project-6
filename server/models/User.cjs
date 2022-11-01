@@ -1,7 +1,4 @@
 // @ts-check
-// import objectionUnique from 'objection-unique';
-// import BaseModel from './BaseModel.cjs';
-// import encrypt from '../lib/secure.cjs';
 
 const objectionUnique = require('objection-unique');
 const BaseModel = require('./BaseModel.cjs');
@@ -43,7 +40,7 @@ module.exports = class User extends unique(BaseModel) {
     return {
       tasks: {
         relation: BaseModel.HasManyRelation,
-        modelClass: 'Task',
+        modelClass: 'Task.cjs',
         join: {
           from: 'users.id',
           to: 'tasks.creatorId',
