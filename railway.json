@@ -1,7 +1,7 @@
 {
   "build": {
     "builder": "NIXPACKS",
-    "cmd": "make start-frontend"
+    "buildCommand": "make start-frontend"
   },
   "deploy": {
     "startCommand": "make start-backend",
