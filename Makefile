@@ -16,6 +16,7 @@ start:
 	heroku local -f Procfile.dev
 
 start-backend:
+	npx knex migrate:latest
 	npm start --options --watch --verbose-watch --ignore-watch='node_modules .git .sqlite'
 
 start-back-nodemon:
