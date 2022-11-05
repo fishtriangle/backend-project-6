@@ -30,7 +30,9 @@ export const test = {
 
 export const production = {
   client: 'sqlite3',
-  connection: process.env.DATABASE_URL,
+  connection: {
+    filename: './database.sqlite',
+  },
   useNullAsDefault: true,
   migrations,
 };
