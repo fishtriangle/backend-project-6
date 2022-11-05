@@ -1,9 +1,11 @@
 {
   "build": {
-    "builder": "NIXPACKS",
-    "cmd": "npx knex migrate:latest"
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
   },
   "deploy": {
+    "cmd": "npx knex migrate:latest",
+    "startCommand": "make start-backend",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
